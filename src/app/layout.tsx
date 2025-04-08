@@ -1,34 +1,34 @@
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-import './globals.css';
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import "./globals.css";
+import { ClientBody } from "@/app/ClientBody";
 
 const manrope = localFont({
-  src: '../../public/fonts/Manrope-VariableFont.ttf',
-  variable: '--font-manrope',
-  display: 'swap',
+    src: "../../public/fonts/Manrope-VariableFont.ttf",
+    variable: "--font-manrope",
+    display: "swap",
 });
 
 const inter = localFont({
-  src: '../../public/fonts/Inter-VariableFont.ttf',
-  variable: '--font-inter',
-  display: 'swap',
+    src: "../../public/fonts/Inter-VariableFont.ttf",
+    variable: "--font-inter",
+    display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: 'Arini | The leading AI receptionist for dentists',
-  description: 'Hire Arini to answer your calls and manage your appointments 24/7. Trusted by hundreds of DSO, Dental Groups, and Solo Practices across the US and Canada.',
+    title: "Kraftodent | Premium Dental Products & Supplies",
+    description:
+        "Kraftodent offers high-quality dental supplies and products for dental clinics and practitioners across India. Trusted by hundreds of dental professionals nationwide.",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  return (
-    <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
-      <body className="min-h-screen font-manrope antialiased">
-        {children}
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
+            <ClientBody>{children}</ClientBody>
+        </html>
+    );
 }
