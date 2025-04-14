@@ -14,6 +14,7 @@ export default function Hero() {
             className="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden bg-gradient-to-b from-white to-blue-50"
         >
             {/* Animated Background Elements */}
+
             <div className="absolute inset-0 overflow-hidden">
                 {Array.from({ length: 20 }).map((_, i) => (
                     <motion.div

@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Clock, DollarSign, Users } from "lucide-react";
+import { Clock, DollarSign, IndianRupee, Users } from "lucide-react";
 import StatCard from "@/components/ui/StatCard";
 
 export default function Analytics() {
@@ -60,7 +60,7 @@ export default function Analytics() {
                         label="Reduction in Administrative Time"
                     />
                     <StatCard
-                        icon={<DollarSign className="h-10 w-10" />}
+                        icon={<IndianRupee className="h-10 w-10" />}
                         value="₹2,50,000"
                         endValue={250000}
                         suffix="+"
