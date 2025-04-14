@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
@@ -8,13 +8,38 @@ export default function Hero() {
     const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
     const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -50]);
 
+    // Add state for window dimensions
+    const [windowSize, setWindowSize] = useState({
+        width: 0,
+        height: 0,
+    });
+
+    // Only access window after component mounts
+    useEffect(() => {
+        // Set initial dimensions
+        setWindowSize({
+            width: window.innerWidth,
+            height: window.innerHeight,
+        });
+
+        // Update dimensions on resize
+        const handleResize = () => {
+            setWindowSize({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     return (
         <motion.section
             style={{ opacity: heroOpacity, y: heroY }}
             className="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden bg-gradient-to-b from-white to-blue-50"
         >
             {/* Animated Background Elements */}
-
             <div className="absolute inset-0 overflow-hidden">
                 {Array.from({ length: 20 }).map((_, i) => (
                     <motion.div
@@ -23,18 +48,18 @@ export default function Hero() {
                         initial={{
                             width: Math.random() * 300 + 50,
                             height: Math.random() * 300 + 50,
-                            x: Math.random() * window.innerWidth,
-                            y: Math.random() * window.innerHeight,
+                            x: Math.random() * (windowSize.width || 1000), // Fallback value
+                            y: Math.random() * (windowSize.height || 800), // Fallback value
                             opacity: Math.random() * 0.3,
                         }}
                         animate={{
                             y: [
-                                Math.random() * window.innerHeight,
-                                Math.random() * window.innerHeight,
+                                Math.random() * (windowSize.height || 800),
+                                Math.random() * (windowSize.height || 800),
                             ],
                             x: [
-                                Math.random() * window.innerWidth,
-                                Math.random() * window.innerWidth,
+                                Math.random() * (windowSize.width || 1000),
+                                Math.random() * (windowSize.width || 1000),
                             ],
                         }}
                         transition={{

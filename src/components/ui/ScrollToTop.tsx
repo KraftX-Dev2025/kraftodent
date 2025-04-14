@@ -4,28 +4,39 @@ import { ArrowUp } from "lucide-react";
 
 export default function ScrollToTop() {
     const [isVisible, setIsVisible] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
 
-    // Show button when page is scrolled down
-    const toggleVisibility = () => {
-        if (window.pageYOffset > 300) {
-            setIsVisible(true);
-        } else {
-            setIsVisible(false);
-        }
-    };
+    useEffect(() => {
+        // Mark component as mounted
+        setIsMounted(true);
 
-    // Set the top of the page
+        // Show button when page is scrolled down
+        const toggleVisibility = () => {
+            if (window.pageYOffset > 300) {
+                setIsVisible(true);
+            } else {
+                setIsVisible(false);
+            }
+        };
+
+        // Set the top of the page
+        window.addEventListener("scroll", toggleVisibility);
+
+        // Initial check
+        toggleVisibility();
+
+        return () => window.removeEventListener("scroll", toggleVisibility);
+    }, []);
+
+    // Only render the button on the client
+    if (!isMounted) return null;
+
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
             behavior: "smooth",
         });
     };
-
-    useEffect(() => {
-        window.addEventListener("scroll", toggleVisibility);
-        return () => window.removeEventListener("scroll", toggleVisibility);
-    }, []);
 
     return (
         <AnimatePresence>

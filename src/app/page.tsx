@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
-import Hero from "@/components/sections/Hero";
 import Features from "@/components/sections/Features";
 import Product from "@/components/sections/Product";
 import Analytics from "@/components/sections/Analytics";
@@ -13,9 +13,17 @@ import Footer from "@/components/sections/Footer";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
+// Dynamically import the Hero component with client-side only
+const Hero = dynamic(() => import("@/components/sections/Hero"), {
+    ssr: false,
+});
+
 export default function Home() {
-    // Initialize smooth scrolling for anchor links
+    // Initialize smooth scrolling for anchor links - only runs on client
     useEffect(() => {
+        // Check if we're in the browser environment
+        if (typeof window === "undefined") return;
+
         // Smooth scroll function for anchor links
         const handleAnchorClick = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
