@@ -51,7 +51,7 @@ export default function Footer() {
     ];
 
     return (
-        <footer className="bg-gray-900 text-white">
+        <footer className="bg-blue-500 text-white">
             <div className="container mx-auto px-6">
                 <div className="pt-16 pb-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
@@ -64,24 +64,22 @@ export default function Footer() {
                                 viewport={{ once: true }}
                                 className="flex items-center mb-4"
                             >
-                                <Sparkles className="h-8 w-8 text-blue-400" />
+                                <Sparkles className="h-8 w-8" />
                                 <span className="ml-2 text-xl font-bold">
                                     Kraftodent
                                 </span>
                             </motion.div>
-
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1, duration: 0.5 }}
                                 viewport={{ once: true }}
-                                className="text-gray-400 mb-6 max-w-sm"
+                                className="mb-6 max-w-sm"
                             >
                                 Transforming dental practices across India with
                                 our AI-powered receptionist and practice
                                 management solutions.
                             </motion.p>
-
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -89,12 +87,11 @@ export default function Footer() {
                                 viewport={{ once: true }}
                                 className="flex items-center space-x-2 mb-6"
                             >
-                                <Mail className="h-4 w-4 text-blue-400" />
-                                <span className="text-gray-400 text-sm">
+                                <Mail className="h-4 w-4" />
+                                <span className="text-sm">
                                     contact@kraftodent.com
                                 </span>
                             </motion.div>
-
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -102,13 +99,12 @@ export default function Footer() {
                                 viewport={{ once: true }}
                                 className="flex items-center space-x-2"
                             >
-                                <Phone className="h-4 w-4 text-blue-400" />
-                                <span className="text-gray-400 text-sm">
+                                <Phone className="h-4 w-4" />
+                                <span className="text-sm">
                                     +91 9876543210
                                 </span>
                             </motion.div>
                         </div>
-
                         {/* Footer Links */}
                         {footerLinks.map((column, columnIndex) => (
                             <div key={columnIndex}>
@@ -124,7 +120,6 @@ export default function Footer() {
                                 >
                                     {column.title}
                                 </motion.h3>
-
                                 <ul className="space-y-3">
                                     {column.links.map((link, linkIndex) => (
                                         <motion.li
@@ -141,7 +136,7 @@ export default function Footer() {
                                         >
                                             <a
                                                 href={link.href}
-                                                className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
+                                                className="hover:text-blue-400 transition-colors text-sm"
                                             >
                                                 {link.text}
                                             </a>
@@ -154,18 +149,17 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="border-t border-gray-800 py-6">
+                <div className="border-t py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center">
                         <motion.div
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
                             transition={{ duration: 0.5 }}
                             viewport={{ once: true }}
-                            className="text-gray-500 text-sm mb-4 md:mb-0"
+                            className="text-sm mb-4 md:mb-0"
                         >
                             © {currentYear} Kraftodent. All rights reserved.
                         </motion.div>
-
                         <motion.div
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
@@ -177,7 +171,7 @@ export default function Footer() {
                                 <a
                                     key={index}
                                     href={link.href}
-                                    className="text-gray-400 hover:text-blue-400 transition-colors"
+                                    className="hover:text-blue-200 hover:scale-150 transition-colors"
                                     aria-label={`Social media link ${
                                         index + 1
                                     }`}

@@ -1,8 +1,17 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { PhoneCall, CalendarClock, Share2, Bot } from "lucide-react";
 
 export default function Product() {
+    // Add a state to control when animations should start
+    const [isMounted, setIsMounted] = useState(false);
+    
+    // Only enable animations after component mounts on client side
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const fadeInUpVariants = {
         hidden: { opacity: 0, y: 50 },
         visible: (i: number) => ({
@@ -49,53 +58,63 @@ export default function Product() {
                         <div className="absolute -inset-4 bg-blue-600/10 rounded-3xl blur-xl transform -rotate-6"></div>
                         <div className="relative bg-white p-6 rounded-2xl shadow-2xl overflow-hidden border border-blue-100">
                             <div className="aspect-video rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center overflow-hidden">
-                                <motion.div
-                                    initial={{ scale: 0.8, opacity: 0.5 }}
-                                    animate={{
-                                        scale: [0.8, 1.02, 0.98, 1],
-                                        opacity: 1,
-                                    }}
-                                    transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                        repeatType: "reverse",
-                                    }}
-                                    className="relative"
-                                >
-                                    <Bot className="h-32 w-32 text-blue-600" />
+                                {isMounted ? (
+                                    <motion.div
+                                        initial={{ scale: 0.8, opacity: 0.5 }}
+                                        animate={{
+                                            scale: [0.8, 1.02, 0.98, 1],
+                                            opacity: 1,
+                                        }}
+                                        transition={{
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            repeatType: "reverse",
+                                        }}
+                                        className="relative"
+                                    >
+                                        <Bot className="h-32 w-32 text-blue-600" />
 
-                                    {/* Animated rings */}
-                                    {[...Array(3)].map((_, i) => (
-                                        <motion.div
-                                            key={i}
-                                            className="absolute inset-0 rounded-full border-2 border-blue-600/30"
-                                            animate={{
-                                                scale: [1, 1.5, 2],
-                                                opacity: [0.7, 0.4, 0],
-                                            }}
-                                            transition={{
-                                                duration: 2,
-                                                repeat: Infinity,
-                                                delay: i * 0.5,
-                                            }}
-                                        />
-                                    ))}
+                                        {/* Animated rings */}
+                                        {[...Array(3)].map((_, i) => (
+                                            <motion.div
+                                                key={i}
+                                                className="absolute inset-0 rounded-full border-2 border-blue-600/30"
+                                                animate={{
+                                                    scale: [1, 1.5, 2],
+                                                    opacity: [0.7, 0.4, 0],
+                                                }}
+                                                transition={{
+                                                    duration: 2,
+                                                    repeat: Infinity,
+                                                    delay: i * 0.5,
+                                                }}
+                                            />
+                                        ))}
 
-                                    {/* Animated data points */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        {[...Array(12)].map((_, i) => {
-                                            const angle =
-                                                (i * 30 * Math.PI) / 180;
-                                            const x = Math.cos(angle) * 100;
-                                            const y = Math.sin(angle) * 100;
-
-                                            return (
+                                        {/* Animated data points - Use fixed values instead of calculations for consistent rendering */}
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            {/* Replace Math.cos/Math.sin calculations with fixed coordinates */}
+                                            {[
+                                                { left: "50%", top: "0%" },
+                                                { left: "75%", top: "25%" },
+                                                { left: "100%", top: "50%" },
+                                                { left: "75%", top: "75%" },
+                                                { left: "50%", top: "100%" },
+                                                { left: "25%", top: "75%" },
+                                                { left: "0%", top: "50%" },
+                                                { left: "25%", top: "25%" },
+                                                { left: "37%", top: "13%" },
+                                                { left: "63%", top: "13%" },
+                                                { left: "63%", top: "87%" },
+                                                { left: "37%", top: "87%" }
+                                            ].map((position, i) => (
                                                 <motion.div
                                                     key={i}
                                                     className="absolute w-2 h-2 bg-blue-600 rounded-full"
                                                     style={{
-                                                        left: `calc(50% + ${x}px)`,
-                                                        top: `calc(50% + ${y}px)`,
+                                                        left: position.left,
+                                                        top: position.top,
+                                                        transform: "translate(-50%, -50%)"
                                                     }}
                                                     animate={{
                                                         opacity: [0, 1, 0],
@@ -107,43 +126,32 @@ export default function Product() {
                                                         delay: i * 0.25,
                                                     }}
                                                 />
-                                            );
-                                        })}
-                                    </div>
+                                            ))}
+                                        </div>
 
-                                    {/* Digital connection lines */}
-                                    <svg
-                                        className="absolute inset-0 w-full h-full"
-                                        viewBox="0 0 200 200"
-                                    >
-                                        {[...Array(6)].map((_, i) => {
-                                            const startAngle =
-                                                (i * 60 * Math.PI) / 180;
-                                            const endAngle =
-                                                ((i + 3) * 60 * Math.PI) / 180;
-
-                                            const startX =
-                                                Math.cos(startAngle) * 80 + 100;
-                                            const startY =
-                                                Math.sin(startAngle) * 80 + 100;
-                                            const endX =
-                                                Math.cos(endAngle) * 80 + 100;
-                                            const endY =
-                                                Math.sin(endAngle) * 80 + 100;
-
-                                            return (
+                                        {/* Digital connection lines - simplified with fixed coordinates */}
+                                        <svg
+                                            className="absolute inset-0 w-full h-full"
+                                            viewBox="0 0 200 200"
+                                        >
+                                            {[
+                                                { start: "100,20", end: "100,180" },
+                                                { start: "20,100", end: "180,100" },
+                                                { start: "40,40", end: "160,160" },
+                                                { start: "160,40", end: "40,160" },
+                                                { start: "100,50", end: "150,100" },
+                                                { start: "50,100", end: "100,150" }
+                                            ].map((line, i) => (
                                                 <motion.path
                                                     key={i}
-                                                    d={`M ${startX} ${startY} L ${endX} ${endY}`}
+                                                    d={`M ${line.start} L ${line.end}`}
                                                     stroke="rgba(37, 99, 235, 0.3)"
                                                     strokeWidth="1"
                                                     fill="none"
                                                     strokeDasharray="5,5"
                                                     animate={{
                                                         pathLength: [0, 1],
-                                                        opacity: [
-                                                            0.2, 0.7, 0.2,
-                                                        ],
+                                                        opacity: [0.2, 0.7, 0.2],
                                                     }}
                                                     transition={{
                                                         duration: 4,
@@ -151,10 +159,15 @@ export default function Product() {
                                                         delay: i * 0.5,
                                                     }}
                                                 />
-                                            );
-                                        })}
-                                    </svg>
-                                </motion.div>
+                                            ))}
+                                        </svg>
+                                    </motion.div>
+                                ) : (
+                                    // Static pre-hydration placeholder
+                                    <div className="relative">
+                                        <Bot className="h-32 w-32 text-blue-600" />
+                                    </div>
+                                )}
                             </div>
 
                             {/* Chat messages */}

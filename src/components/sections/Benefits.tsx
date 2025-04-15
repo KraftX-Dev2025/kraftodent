@@ -105,7 +105,7 @@ export default function Benefits() {
                                         "Smart scheduling optimization",
                                         "No sick days or staff turnover",
                                         "Scales with your practice",
-                                        "Costs ₹25,000-₹40,000 per month",
+                                        // "Costs ₹25,000-₹40,000 per month",
                                     ].map((item, index) => (
                                         <motion.li
                                             key={index}
@@ -153,7 +153,7 @@ export default function Benefits() {
                                         "Sub-optimal scheduling",
                                         "Affected by staff unavailability",
                                         "Requires additional staff as you grow",
-                                        "Costs ₹40,000-₹80,000 per month",
+                                        // "Costs ₹40,000-₹80,000 per month",
                                     ].map((item, index) => (
                                         <motion.li
                                             key={index}

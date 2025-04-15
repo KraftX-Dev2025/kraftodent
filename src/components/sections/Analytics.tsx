@@ -1,31 +1,49 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Clock, DollarSign, IndianRupee, Users } from "lucide-react";
 import StatCard from "@/components/ui/StatCard";
 
 export default function Analytics() {
+    // Add client-side only state
+    const [isMounted, setIsMounted] = useState(false);
+    
+    // Set mounted state after hydration is complete
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+    
+    // Define background animation blobs with fixed coordinates instead of random ones
+    const backgroundBlobs = [
+        { width: "180px", height: "200px", left: "10%", top: "20%" },
+        { width: "220px", height: "240px", left: "70%", top: "15%" },
+        { width: "150px", height: "270px", left: "85%", top: "60%" },
+        { width: "250px", height: "300px", left: "30%", top: "75%" },
+        { width: "300px", height: "200px", left: "50%", top: "40%" }
+    ];
+
     return (
         <section className="py-24 bg-white relative overflow-hidden">
             {/* Background Animation */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute w-full h-full">
-                    {[...Array(5)].map((_, i) => (
+                    {isMounted && backgroundBlobs.map((blob, i) => (
                         <motion.div
                             key={i}
                             className="absolute rounded-full bg-blue-600/5"
                             style={{
-                                width: `${Math.random() * 300 + 100}px`,
-                                height: `${Math.random() * 300 + 100}px`,
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
+                                width: blob.width,
+                                height: blob.height,
+                                left: blob.left,
+                                top: blob.top
                             }}
                             animate={{
-                                x: [0, Math.random() * 100 - 50],
-                                y: [0, Math.random() * 100 - 50],
+                                x: [0, i % 2 === 0 ? 50 : -50],
+                                y: [0, i % 3 === 0 ? 50 : -50],
                                 opacity: [0.1, 0.3, 0.1],
                             }}
                             transition={{
-                                duration: Math.random() * 10 + 10,
+                                duration: 10 + i * 2,
                                 repeat: Infinity,
                                 repeatType: "reverse",
                             }}
@@ -61,10 +79,10 @@ export default function Analytics() {
                     />
                     <StatCard
                         icon={<IndianRupee className="h-10 w-10" />}
-                        value="₹2,50,000"
+                        value="₹25,0000"
                         endValue={250000}
                         suffix="+"
-                        label="Average Monthly Savings"
+                        label="Saved Annually"
                     />
                     <StatCard
                         icon={<Users className="h-10 w-10" />}
