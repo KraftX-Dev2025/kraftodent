@@ -45,12 +45,12 @@ export default function Navbar() {
                         transition={{ duration: 0.5 }}
                         className="flex items-center"
                     >
-                        <Sparkles className="h-8 w-8 text-blue-600" />
-                        <span className="ml-2 text-xl font-bold text-gray-800">
-                            Kraftodent
-                        </span>
+                        <img
+                            src="/logo.png"
+                            alt="Kraftodent Logo"
+                            className="h-18 w-auto"
+                        />
                     </motion.div>
-
                     {/* Desktop Navigation */}
                     <motion.div
                         initial={{ opacity: 0 }}
