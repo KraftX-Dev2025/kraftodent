@@ -48,13 +48,19 @@ export default function Navbar() {
                         transition={{ duration: 0.5 }}
                         className="flex items-center"
                     >
-                        <div className="text-xl md:text-2xl font-bold text-blue-600">
-                            <Image
-                                src="/logo.webp"
-                                alt="Company Logo"
-                                width={70}
+                        <div className="flex items-center text-xl md:text-2xl font-bold text-blue-600">
+                            <img
+                                src="/Icon.png"
+                                alt="Company Icon"
+                                width={40}
                                 height={40}
-                                priority
+                                className="h-auto mr-2"
+                            />
+                            <img
+                                src="/Text.png"
+                                alt="Company Text"
+                                width={120}
+                                height={40}
                                 className="h-auto"
                             />
                         </div>

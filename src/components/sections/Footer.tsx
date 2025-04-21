@@ -64,11 +64,11 @@ export default function Footer() {
                                 viewport={{ once: true }}
                                 className="mb-6"
                             >
-                                <div className="bg-white p-1 rounded-xl inline-block shadow-md">
+                                <div className=" p-1 rounded-xl inline-block">
                                     <Image
-                                        src="/logo.webp"
+                                        src="/Logo White.png"
                                         alt="Company Logo"
-                                        width={60}
+                                        width={100}
                                         height={40}
                                         className="h-auto"
                                     />
@@ -81,8 +81,8 @@ export default function Footer() {
                                 viewport={{ once: true }}
                                 className="mb-6 max-w-sm text-blue-100"
                             >
-                                India's First Dental AI Assistant That Works
-                                24/7 So You Don't Have To.
+                                India's First Dental AI Assistant that works
+                                24/7 so you don't have to.
                             </motion.p>
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
@@ -162,7 +162,7 @@ export default function Footer() {
                             viewport={{ once: true }}
                             className="text-sm mb-4 md:mb-0 text-blue-100"
                         >
-                            © {currentYear} KraftODent. All rights reserved.
+                            © {currentYear} Kraftodent. All rights reserved.
                         </motion.div>
                         <motion.div
                             initial={{ opacity: 0 }}
