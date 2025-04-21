@@ -89,7 +89,7 @@ export default function Footer() {
                             >
                                 <Mail className="h-4 w-4" />
                                 <span className="text-sm">
-                                    contact@kraftodent.com
+                                    contact@kraftxworks.com
                                 </span>
                             </motion.div>
                             <motion.div
@@ -101,7 +101,7 @@ export default function Footer() {
                             >
                                 <Phone className="h-4 w-4" />
                                 <span className="text-sm">
-                                    +91 9876543210
+                                    +91 9822296812
                                 </span>
                             </motion.div>
                         </div>

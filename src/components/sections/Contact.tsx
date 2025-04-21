@@ -1,8 +1,87 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { MessageSquare } from "lucide-react";
 
 export default function Contact() {
+    const [formData, setFormData] = useState({
+        name: "",
+        businessName: "",
+        email: "",
+        phone: "",
+        cityState: "",
+        locationLink: "",
+        practiceSize: "1-3 Dentists"
+    });
+
+    const [errors, setErrors] = useState({});
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData(prevData => ({
+            ...prevData,
+            [id]: value
+        }));
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!formData.name.trim()) newErrors.name = "Full name is required";
+        if (!formData.businessName.trim()) newErrors.businessName = "Business name is required";
+        if (!formData.email.trim()) newErrors.email = "Email is required";
+        if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+        if (!formData.cityState.trim()) newErrors.cityState = "City and state are required";
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const generateWhatsAppMessage = () => {
+        let message = `*New Demo Request*\n\n`;
+        message += `*Contact Details:*\n`;
+        message += `Name: ${formData.name}\n`;
+        message += `Business Name: ${formData.businessName}\n`;
+        message += `Email: ${formData.email}\n`;
+        message += `Phone: ${formData.phone}\n`;
+        message += `Location: ${formData.cityState}\n`;
+        message += `Google Maps: ${formData.locationLink || "Not provided"}\n`;
+        message += `Practice Size: ${formData.practiceSize}\n`;
+
+        return encodeURIComponent(message);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        if (validateForm()) {
+            // Generate WhatsApp URL with the message
+            const whatsappUrl = `https://wa.me/919822296812?text=${generateWhatsAppMessage()}`;
+            
+            // Open WhatsApp in a new tab
+            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+            
+            // Optional: Reset the form after successful submission
+            setFormData({
+                name: "",
+                businessName: "",
+                email: "",
+                phone: "",
+                cityState: "",
+                locationLink: "",
+                practiceSize: "1-3 Dentists"
+            });
+        } else {
+            // Scroll to the first error
+            const firstErrorField = Object.keys(errors)[0];
+            if (firstErrorField) {
+                document.getElementById(firstErrorField)?.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }
+    };
+
     return (
         <section
             id="contact"
@@ -67,19 +146,45 @@ export default function Contact() {
                         viewport={{ once: true }}
                         className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100"
                     >
-                        <form className="space-y-6">
+                        <form className="space-y-6" onSubmit={handleSubmit}>
                             <div>
                                 <label
                                     htmlFor="name"
                                     className="block text-sm font-medium text-gray-700"
                                 >
-                                    Practice Name
+                                    Full Name
                                 </label>
                                 <input
                                     type="text"
                                     id="name"
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600"
+                                    placeholder="Full Name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className={`mt-1 block w-full rounded-md border ${
+                                        errors.name ? "border-red-500" : "border-gray-300"
+                                    } px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600`}
                                 />
+                                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="businessName"
+                                    className="block text-sm font-medium text-gray-700"
+                                >
+                                    Business Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="businessName"
+                                    placeholder="Your Company / Business Name"
+                                    value={formData.businessName}
+                                    onChange={handleChange}
+                                    className={`mt-1 block w-full rounded-md border ${
+                                        errors.businessName ? "border-red-500" : "border-gray-300"
+                                    } px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600`}
+                                />
+                                {errors.businessName && <p className="text-red-500 text-xs mt-1">{errors.businessName}</p>}
                             </div>
 
                             <div>
@@ -92,8 +197,14 @@ export default function Contact() {
                                 <input
                                     type="email"
                                     id="email"
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600"
+                                    placeholder="Your Company / Personal Mail"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className={`mt-1 block w-full rounded-md border ${
+                                        errors.email ? "border-red-500" : "border-gray-300"
+                                    } px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600`}
                                 />
+                                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                             </div>
 
                             <div>
@@ -101,24 +212,69 @@ export default function Contact() {
                                     htmlFor="phone"
                                     className="block text-sm font-medium text-gray-700"
                                 >
-                                    Phone Number
+                                    Mobile Number
                                 </label>
                                 <input
                                     type="tel"
                                     id="phone"
+                                    placeholder="Phone Number / Mobile Number"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    className={`mt-1 block w-full rounded-md border ${
+                                        errors.phone ? "border-red-500" : "border-gray-300"
+                                    } px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600`}
+                                />
+                                {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="cityState"
+                                    className="block text-sm font-medium text-gray-700"
+                                >
+                                    City and State
+                                </label>
+                                <input
+                                    type="text"
+                                    id="cityState"
+                                    placeholder="Your Location"
+                                    value={formData.cityState}
+                                    onChange={handleChange}
+                                    className={`mt-1 block w-full rounded-md border ${
+                                        errors.cityState ? "border-red-500" : "border-gray-300"
+                                    } px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600`}
+                                />
+                                {errors.cityState && <p className="text-red-500 text-xs mt-1">{errors.cityState}</p>}
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="locationLink"
+                                    className="block text-sm font-medium text-gray-700"
+                                >
+                                    Google Maps Link
+                                </label>
+                                <input
+                                    type="url"
+                                    id="locationLink"
+                                    placeholder="Google Maps Link"
+                                    value={formData.locationLink}
+                                    onChange={handleChange}
                                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600"
                                 />
                             </div>
 
                             <div>
                                 <label
-                                    htmlFor="practice-size"
+                                    htmlFor="practiceSize"
                                     className="block text-sm font-medium text-gray-700"
                                 >
                                     Practice Size
                                 </label>
                                 <select
-                                    id="practice-size"
+                                    id="practiceSize"
+                                    value={formData.practiceSize}
+                                    onChange={handleChange}
                                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600"
                                 >
                                     <option>1-3 Dentists</option>
@@ -127,29 +283,16 @@ export default function Contact() {
                                 </select>
                             </div>
 
-                            <div>
-                                <label
-                                    htmlFor="city"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    City
-                                </label>
-                                <input
-                                    type="text"
-                                    id="city"
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600"
-                                />
-                            </div>
-
                             <motion.div
                                 whileHover={{ scale: 1.03 }}
                                 whileTap={{ scale: 0.97 }}
                             >
                                 <Button
                                     type="submit"
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition duration-300"
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition duration-300 flex items-center justify-center space-x-2"
                                 >
-                                    Schedule Free Demo
+                                    <MessageSquare size={18} />
+                                    <span>Book a Demo</span>
                                 </Button>
                             </motion.div>
                         </form>
@@ -167,7 +310,7 @@ export default function Contact() {
                             Or reach us directly:
                         </p>
                         <p className="text-blue-600 font-semibold">
-                            contact@kraftodent.com | +91 9876543210
+                            contact@kraftxworks.com | +91 9822296812
                         </p>
                     </motion.div>
                 </div>
