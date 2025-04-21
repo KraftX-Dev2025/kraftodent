@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, useScroll, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const navLinks = [
     { title: "Features", href: "#features" },
@@ -47,9 +48,15 @@ export default function Navbar() {
                         transition={{ duration: 0.5 }}
                         className="flex items-center"
                     >
-                        {/* Replace with your actual logo path or check if it exists */}
                         <div className="text-xl md:text-2xl font-bold text-blue-600">
-                            KraftODent
+                            <Image
+                                src="/logo.webp"
+                                alt="Company Logo"
+                                width={70}
+                                height={40}
+                                priority
+                                className="h-auto"
+                            />
                         </div>
                     </motion.div>
 

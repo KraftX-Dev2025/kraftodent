@@ -14,8 +14,6 @@ import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import SEO from "@/components/SEO";
-
 // Dynamically import the Hero component with client-side only
 const Hero = dynamic(() => import("@/components/sections/Hero"), {
     ssr: false,
@@ -86,13 +84,6 @@ export default function Home() {
 
     return (
         <ThemeProvider defaultTheme="light">
-            <SEO
-                title="AI Automation for Modern Dental Practices in India"
-                description="Transform your dental practice with Kraftodent's AI-powered receptionist and practice management system. Reduce costs, improve patient satisfaction, and optimize operations with our intelligent platform designed for Indian dental practices."
-                keywords="dental AI, virtual dental receptionist, dental practice automation, AI receptionist India, dental CRM, Pune dental technology, dental practice management"
-                ogImage="/og-home.jpg"
-            />
-
             {/* Structured Data for Homepage */}
             <Script
                 id="structured-data-homepage"

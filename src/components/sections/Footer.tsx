@@ -8,6 +8,7 @@ import {
     Mail,
     Phone,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -56,15 +57,23 @@ export default function Footer() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
                         {/* Logo and Description */}
                         <div className="lg:col-span-2">
-                            <motion.h2
+                            <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5 }}
                                 viewport={{ once: true }}
-                                className="text-2xl font-bold mb-4"
+                                className="mb-6"
                             >
-                                KraftODent
-                            </motion.h2>
+                                <div className="bg-white p-1 rounded-xl inline-block shadow-md">
+                                    <Image
+                                        src="/logo.webp"
+                                        alt="Company Logo"
+                                        width={60}
+                                        height={40}
+                                        className="h-auto"
+                                    />
+                                </div>
+                            </motion.div>
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
