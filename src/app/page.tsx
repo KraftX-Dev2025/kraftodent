@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
+import Head from "next/head";
+import Script from "next/script";
 import Navbar from "@/components/layout/Navbar";
 import Features from "@/components/sections/Features";
 import Product from "@/components/sections/Product";
@@ -10,12 +12,11 @@ import CaseStudies from "@/components/sections/CaseStudies";
 import Benefits from "@/components/sections/Benefits";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
-import FAQ from "@/components/sections/FAQ";
-import CTABanner from "@/components/sections/CTABanner";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import SEO from "@/components/SEO";
 
-// Dynamically import components that need client-side only rendering
+// Dynamically import the Hero component with client-side only
 const Hero = dynamic(() => import("@/components/sections/Hero"), {
     ssr: false,
 });
@@ -41,14 +42,11 @@ export default function Home() {
 
                 const targetElement = document.querySelector(anchor.hash);
                 if (targetElement) {
-                    const navbarHeight =
-                        document.querySelector("header")?.offsetHeight || 80;
-
                     window.scrollTo({
                         top:
                             targetElement.getBoundingClientRect().top +
                             window.scrollY -
-                            navbarHeight, // Offset for fixed header
+                            100, // Offset for fixed header
                         behavior: "smooth",
                     });
 
@@ -65,18 +63,53 @@ export default function Home() {
         };
     }, []);
 
+    // Add structured data for the homepage
+    const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "Kraftodent - AI Automation for Dental Practices",
+        url: "https://kraftodent.com",
+        potentialAction: {
+            "@type": "SearchAction",
+            target: "https://kraftodent.com/search?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+        },
+        description:
+            "Kraftodent provides AI-powered receptionist and practice management solutions for dental practices in India. Reduce staff workload and improve patient satisfaction.",
+        inLanguage: "en-IN",
+        author: {
+            "@type": "Organization",
+            name: "Kraftodent",
+            url: "https://kraftodent.com",
+        },
+    };
+
     return (
         <ThemeProvider defaultTheme="light">
+            <SEO
+                title="AI Automation for Modern Dental Practices in India"
+                description="Transform your dental practice with Kraftodent's AI-powered receptionist and practice management system. Reduce costs, improve patient satisfaction, and optimize operations with our intelligent platform designed for Indian dental practices."
+                keywords="dental AI, virtual dental receptionist, dental practice automation, AI receptionist India, dental CRM, Pune dental technology, dental practice management"
+                ogImage="/og-home.jpg"
+            />
+
+            {/* Structured Data for Homepage */}
+            <Script
+                id="structured-data-homepage"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(structuredData),
+                }}
+            />
+
             <main className="min-h-screen bg-white">
                 <Navbar />
                 <Hero />
-                <Benefits />
                 <Features />
                 <Product />
                 <Analytics />
                 <CaseStudies />
-                <CTABanner />
-                <FAQ />
+                <Benefits />
                 <Contact />
                 <Footer />
                 <ScrollToTop />

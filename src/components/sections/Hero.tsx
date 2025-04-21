@@ -1,8 +1,9 @@
-"use client";
+// src/components/sections/Hero.tsx
 import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
+import Image from "next/image";
 
 export default function Hero() {
     const { scrollYProgress } = useScroll();
@@ -17,24 +18,36 @@ export default function Hero() {
         setIsMounted(true);
     }, []);
 
-    // Define fixed background bubble positions with fewer elements for better performance
+    // Define fixed background bubble positions instead of using random values
     const backgroundBubbles = [
         { width: 180, height: 180, x: "10%", y: "15%" },
         { width: 250, height: 250, x: "30%", y: "25%" },
         { width: 150, height: 150, x: "70%", y: "20%" },
         { width: 200, height: 200, x: "85%", y: "40%" },
+        { width: 300, height: 300, x: "20%", y: "60%" },
         { width: 280, height: 280, x: "50%", y: "75%" },
         { width: 170, height: 170, x: "80%", y: "80%" },
+        { width: 220, height: 220, x: "40%", y: "85%" },
         { width: 190, height: 190, x: "90%", y: "10%" },
+        { width: 160, height: 160, x: "15%", y: "45%" },
         { width: 240, height: 240, x: "75%", y: "50%" },
+        { width: 320, height: 320, x: "55%", y: "30%" },
+        { width: 200, height: 200, x: "25%", y: "35%" },
+        { width: 270, height: 270, x: "60%", y: "65%" },
+        { width: 210, height: 210, x: "5%", y: "70%" },
+        { width: 230, height: 230, x: "45%", y: "5%" },
+        { width: 340, height: 340, x: "65%", y: "90%" },
+        { width: 260, height: 260, x: "35%", y: "55%" },
+        { width: 140, height: 140, x: "95%", y: "60%" },
+        { width: 290, height: 290, x: "5%", y: "95%" },
     ];
 
     return (
         <motion.section
             style={{ opacity: heroOpacity, y: heroY }}
-            className="relative min-h-[85vh] lg:min-h-screen flex items-center pt-16 pb-12 lg:pt-24 lg:pb-20 overflow-hidden bg-gradient-to-b from-white to-blue-50"
+            className="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden bg-gradient-to-b from-white to-blue-50"
         >
-            {/* Animated Background Elements - Reduced for better performance */}
+            {/* Animated Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
                 {isMounted &&
                     backgroundBubbles.map((bubble, i) => (
@@ -53,7 +66,7 @@ export default function Hero() {
                                 x: ["0%", i % 3 === 0 ? "5%" : "-5%"],
                             }}
                             transition={{
-                                duration: 10 + (i % 5), // Reduced variability
+                                duration: 10 + (i % 10),
                                 repeat: Infinity,
                                 repeatType: "reverse",
                             }}
@@ -61,7 +74,7 @@ export default function Hero() {
                     ))}
             </div>
 
-            <div className="container mx-auto px-4 sm:px-6 relative z-10">
+            <div className="container mx-auto px-6 relative z-10">
                 <div className="flex flex-col md:flex-row items-center">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -69,34 +82,42 @@ export default function Hero() {
                         transition={{ duration: 0.8 }}
                         className="md:w-1/2"
                     >
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4 md:mb-6">
-                            <span className="text-blue-600">
-                                24/7 AI Dental Assistant
-                            </span>{" "}
-                            for Smarter Clinics
+                        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                            <span className="text-blue-600">Kraftodent AI</span>{" "}
+                            Receptionist for Dental Practices in India
                         </h1>
-                        <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-8 max-w-2xl">
-                            Never miss a patient call, appointment, or
-                            follow-up. KraftODent automates your front desk —
-                            even when you're off the clock.
+                        <p className="text-xl text-gray-600 mb-8 max-w-2xl">
+                            Transform your dental practice with Kraftodent's
+                            intelligent automation. Handle scheduling, patient
+                            communication, and practice management with AI
+                            precision. Save ₹250,000 annually and boost patient
+                            satisfaction to 98%.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <a href="#contact" className="">
+                            <a
+                                href="#contact"
+                                aria-label="Book a demo of Kraftodent AI Receptionist"
+                                className=""
+                            >
                                 <Button
                                     size="lg"
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-5 rounded-lg text-base md:text-lg font-semibold transition duration-300 w-full sm:w-auto"
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-lg text-lg font-semibold transition duration-300"
                                 >
-                                    Book a Free Demo
+                                    Book Demo
                                 </Button>
                             </a>
-                            <a href="#product" className="">
+                            <a
+                                href="#features"
+                                aria-label="See Kraftodent AI in action with feature demonstration"
+                                className=""
+                            >
                                 <Button
                                     size="lg"
                                     variant="outline"
-                                    className="border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-5 rounded-lg text-base md:text-lg font-semibold transition duration-300 flex items-center gap-2 w-full sm:w-auto justify-center"
+                                    className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 flex items-center gap-2"
                                 >
                                     <Play size={20} className="text-blue-600" />
-                                    See How It Works
+                                    See it in Action
                                 </Button>
                             </a>
                         </div>
@@ -106,7 +127,7 @@ export default function Hero() {
                         initial={{ opacity: 0, x: 50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.3 }}
-                        className="md:w-1/2 mt-8 md:mt-0"
+                        className="md:w-1/2 mt-10 md:mt-0"
                     >
                         <div className="relative">
                             {isMounted ? (
@@ -121,11 +142,15 @@ export default function Hero() {
                                         repeat: Infinity,
                                         repeatType: "reverse",
                                     }}
+                                    aria-hidden="true"
                                 />
                             ) : (
-                                <div className="absolute inset-0 bg-blue-600/30 rounded-xl blur-2xl" />
+                                <div
+                                    className="absolute inset-0 bg-blue-600/30 rounded-xl blur-2xl"
+                                    aria-hidden="true"
+                                />
                             )}
-                            <div className="relative bg-white/80 backdrop-blur-sm p-6 md:p-8 rounded-xl shadow-xl border border-blue-100">
+                            <div className="relative bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl border border-blue-100">
                                 <div className="w-full aspect-square rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center overflow-hidden">
                                     {isMounted ? (
                                         <motion.div
@@ -142,7 +167,7 @@ export default function Hero() {
                                         >
                                             {/* AI Assistant Visualization */}
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-blue-600/20 flex items-center justify-center">
+                                                <div className="w-32 h-32 rounded-full bg-blue-600/20 flex items-center justify-center">
                                                     <motion.div
                                                         animate={{
                                                             scale: [1, 1.2, 1],
@@ -151,7 +176,7 @@ export default function Hero() {
                                                             duration: 2,
                                                             repeat: Infinity,
                                                         }}
-                                                        className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-blue-600/40 flex items-center justify-center"
+                                                        className="w-24 h-24 rounded-full bg-blue-600/40 flex items-center justify-center"
                                                     >
                                                         <motion.div
                                                             animate={{
@@ -163,18 +188,19 @@ export default function Hero() {
                                                                 duration: 1.5,
                                                                 repeat: Infinity,
                                                             }}
-                                                            className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-600 flex items-center justify-center text-white"
+                                                            className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white"
                                                         >
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
-                                                                width="24"
-                                                                height="24"
+                                                                width="32"
+                                                                height="32"
                                                                 viewBox="0 0 24 24"
                                                                 fill="none"
                                                                 stroke="currentColor"
                                                                 strokeWidth="2"
                                                                 strokeLinecap="round"
                                                                 strokeLinejoin="round"
+                                                                aria-label="AI assistant microphone icon"
                                                             >
                                                                 <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
                                                                 <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
@@ -190,9 +216,12 @@ export default function Hero() {
                                                 </div>
                                             </div>
 
-                                            {/* Voice Waves - Reduced number for better performance */}
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                {[...Array(3)].map((_, i) => (
+                                            {/* Voice Waves */}
+                                            <div
+                                                className="absolute inset-0 flex items-center justify-center"
+                                                aria-hidden="true"
+                                            >
+                                                {[...Array(4)].map((_, i) => (
                                                     <motion.div
                                                         key={i}
                                                         className="absolute w-full h-full rounded-full border-2 border-blue-600/30"
@@ -212,19 +241,20 @@ export default function Hero() {
                                     ) : (
                                         <div className="w-3/4 h-3/4 relative">
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-blue-600/20 flex items-center justify-center">
-                                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-blue-600/40 flex items-center justify-center">
-                                                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-600 flex items-center justify-center text-white">
+                                                <div className="w-32 h-32 rounded-full bg-blue-600/20 flex items-center justify-center">
+                                                    <div className="w-24 h-24 rounded-full bg-blue-600/40 flex items-center justify-center">
+                                                        <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white">
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
-                                                                width="24"
-                                                                height="24"
+                                                                width="32"
+                                                                height="32"
                                                                 viewBox="0 0 24 24"
                                                                 fill="none"
                                                                 stroke="currentColor"
                                                                 strokeWidth="2"
                                                                 strokeLinecap="round"
                                                                 strokeLinejoin="round"
+                                                                aria-label="AI assistant microphone icon"
                                                             >
                                                                 <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
                                                                 <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
@@ -279,33 +309,42 @@ export default function Hero() {
                     </motion.div>
                 </div>
 
-                {/* Trusted By Section - Simplified for better performance */}
+                {/* Trusted By Section */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.2, duration: 0.8 }}
-                    className="mt-12 md:mt-16 text-center"
+                    className="mt-20 text-center"
                 >
-                    <p className="text-black font-bold mb-4 md:mb-6">
+                    <p className="text-black font-bold mb-6">
                         Trusted by hundreds of dental practices across India
                     </p>
-                    <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8">
+                    <div className="flex flex-wrap justify-center items-center gap-8">
                         {[
                             {
                                 name: "Sukhadanta",
                                 url: "http://sukhadanta.com/",
+                                id: "sukhadanta",
                             },
                             {
                                 name: "Ora Care",
                                 url: "https://oracaredental.in/",
+                                id: "oracare",
                             },
                             {
                                 name: "Dental Care",
                                 url: "https://www.dentalcare.com/",
+                                id: "dentalcare",
                             },
                             {
                                 name: "Smile Studio",
                                 url: "https://www.smilestudio.com/",
+                                id: "smilestudio",
+                            },
+                            {
+                                name: "Perfect Dental",
+                                url: "https://perfectdental.com/",
+                                id: "perfectdental",
                             },
                         ].map((practice, index) => (
                             <motion.div
@@ -317,12 +356,13 @@ export default function Hero() {
                                     delay: 1.5 + index * 0.1,
                                     duration: 0.3,
                                 }}
-                                className="px-4 md:px-6"
+                                className="px-6"
                             >
                                 <a
                                     href={practice.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    aria-label={`Visit ${practice.name} website - Kraftodent customer`}
                                     className="text-blue-700 font-semibold transition-colors duration-300 hover:scale-125"
                                 >
                                     {practice.name}
@@ -331,6 +371,23 @@ export default function Hero() {
                         ))}
                     </div>
                 </motion.div>
+
+                {/* SEO-focused rich snippet information - hidden visually but available to search engines */}
+                <div className="sr-only">
+                    <h2>
+                        AI Dental Receptionist Software for Indian Dental
+                        Practices
+                    </h2>
+                    <p>
+                        Kraftodent is the leading AI receptionist solution for
+                        dental practices in India. Our automated system handles
+                        appointment scheduling, patient communication, and
+                        practice management, reducing staff workload by 65% and
+                        saving ₹250,000 annually. Practices in Pune, Mumbai, and
+                        across India trust Kraftodent to improve their patient
+                        satisfaction rates to 98% while streamlining operations.
+                    </p>
+                </div>
             </div>
         </motion.section>
     );
