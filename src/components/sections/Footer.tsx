@@ -58,6 +58,18 @@ export default function Footer() {
                         {/* Logo and Description */}
                         <div className="lg:col-span-2">
                             <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5 }}
+                                className="flex items-center"
+                            >
+                                <img
+                                    src="/logo.png"
+                                    alt="Kraftodent Logo"
+                                    className="h-18 w-auto bg-white rounded-xl mb-6"
+                                />
+                            </motion.div>
+                            {/* <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5 }}
@@ -68,7 +80,7 @@ export default function Footer() {
                                 <span className="ml-2 text-xl font-bold">
                                     Kraftodent
                                 </span>
-                            </motion.div>
+                            </motion.div> */}
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -172,9 +184,8 @@ export default function Footer() {
                                     key={index}
                                     href={link.href}
                                     className="hover:text-blue-200 hover:scale-150 transition-colors"
-                                    aria-label={`Social media link ${
-                                        index + 1
-                                    }`}
+                                    aria-label={`Social media link ${index + 1
+                                        }`}
                                 >
                                     {link.icon}
                                 </a>

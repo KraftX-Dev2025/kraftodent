@@ -152,12 +152,12 @@ export default function Contact() {
                                     htmlFor="name"
                                     className="block text-sm font-medium text-gray-700"
                                 >
-                                    Full Name
+                                 Name
                                 </label>
                                 <input
                                     type="text"
                                     id="name"
-                                    placeholder="Full Name"
+                                    placeholder="Dr. John Doe"
                                     value={formData.name}
                                     onChange={handleChange}
                                     className={`mt-1 block w-full rounded-md border ${
@@ -177,7 +177,7 @@ export default function Contact() {
                                 <input
                                     type="text"
                                     id="businessName"
-                                    placeholder="Your Company / Business Name"
+                                    placeholder="John's Dental Clinic"
                                     value={formData.businessName}
                                     onChange={handleChange}
                                     className={`mt-1 block w-full rounded-md border ${
@@ -197,7 +197,7 @@ export default function Contact() {
                                 <input
                                     type="email"
                                     id="email"
-                                    placeholder="Your Company / Personal Mail"
+                                    placeholder="john-doe@gmail.com"
                                     value={formData.email}
                                     onChange={handleChange}
                                     className={`mt-1 block w-full rounded-md border ${
@@ -217,7 +217,7 @@ export default function Contact() {
                                 <input
                                     type="tel"
                                     id="phone"
-                                    placeholder="Phone Number / Mobile Number"
+                                    placeholder="+91-1234567890"
                                     value={formData.phone}
                                     onChange={handleChange}
                                     className={`mt-1 block w-full rounded-md border ${
@@ -237,7 +237,7 @@ export default function Contact() {
                                 <input
                                     type="text"
                                     id="cityState"
-                                    placeholder="Your Location"
+                                    placeholder="Bengaluru, Karnataka"
                                     value={formData.cityState}
                                     onChange={handleChange}
                                     className={`mt-1 block w-full rounded-md border ${
@@ -257,7 +257,7 @@ export default function Contact() {
                                 <input
                                     type="url"
                                     id="locationLink"
-                                    placeholder="Google Maps Link"
+                                    placeholder="Your Google Maps Link"
                                     value={formData.locationLink}
                                     onChange={handleChange}
                                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600"
@@ -286,12 +286,13 @@ export default function Contact() {
                             <motion.div
                                 whileHover={{ scale: 1.03 }}
                                 whileTap={{ scale: 0.97 }}
+                                className="flex items-center justify-center"
                             >
                                 <Button
                                     type="submit"
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition duration-300 flex items-center justify-center space-x-2"
+                                    className="w-full space-x-2 md:w-[14rem] bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-bold transition duration-300 "
                                 >
-                                    <MessageSquare size={18} />
+                                    <MessageSquare size={24}/>
                                     <span>Book a Demo</span>
                                 </Button>
                             </motion.div>

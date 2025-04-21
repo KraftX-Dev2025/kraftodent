@@ -8,15 +8,15 @@ export default function Hero() {
     const { scrollYProgress } = useScroll();
     const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
     const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -50]);
-    
+
     // Client-side only state
     const [isMounted, setIsMounted] = useState(false);
-    
+
     // Set mounted state after hydration is complete
     useEffect(() => {
         setIsMounted(true);
     }, []);
-    
+
     // Define fixed background bubble positions instead of using random values
     const backgroundBubbles = [
         { width: 180, height: 180, x: "10%", y: "15%" },
@@ -95,20 +95,32 @@ export default function Hero() {
                             precision.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <Button
-                                size="lg"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-lg text-lg font-semibold transition duration-300"
+                            <a
+                                key="Book Demo"
+                                href="#contact"
+                                className=""
                             >
-                                Book Demo
-                            </Button>
-                            <Button
-                                size="lg"
-                                variant="outline"
-                                className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 flex items-center gap-2"
+                                <Button
+                                    size="lg"
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-lg text-lg font-semibold transition duration-300"
+                                >
+                                    Book Demo
+                                </Button>
+                            </a>
+                            <a
+                                key="See it in Action"
+                                href="#contact"
+                                className=""
                             >
-                                <Play size={20} className="text-blue-600" />
-                                See it in Action
-                            </Button>
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 flex items-center gap-2"
+                                >
+                                    <Play size={20} className="text-blue-600" />
+                                    See it in Action
+                                </Button>
+                            </a>
                         </div>
                     </motion.div>
 
@@ -311,9 +323,9 @@ export default function Hero() {
                                 }}
                                 className="px-6"
                             >
-                                <a 
-                                    href={practice.url} 
-                                    target="_blank" 
+                                <a
+                                    href={practice.url}
+                                    target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-blue-700 font-semibold transition-colors duration-300 hover:scale-125"
                                 >

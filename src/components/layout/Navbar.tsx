@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { motion, useScroll, AnimatePresence } from "framer-motion";
-import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -31,11 +30,10 @@ export default function Navbar() {
 
     return (
         <header
-            className={`fixed w-full z-50 transition-all duration-300 ${
-                isScrolled
-                    ? "bg-white/90 backdrop-blur-md shadow-md py-2"
-                    : "bg-transparent py-4"
-            }`}
+            className={`fixed w-full z-50 transition-all duration-300 ${isScrolled
+                ? "bg-white/90 backdrop-blur-md shadow-md py-2"
+                : "bg-transparent py-4"
+                }`}
         >
             <nav className="container mx-auto px-6">
                 <div className="flex items-center justify-between">
@@ -74,9 +72,15 @@ export default function Navbar() {
                                 {link.title}
                             </motion.a>
                         ))}
-                        <Button className="bg-blue-600 hover:bg-blue-700 text-white transition duration-300">
-                            Book Demo
-                        </Button>
+                        <a
+                            key="Book Demo"
+                            href="#contact"
+                            className=""
+                        >
+                            <Button className="bg-blue-600 hover:bg-blue-700 text-white transition duration-300">
+                                Book Demo
+                            </Button>
+                        </a>
                     </motion.div>
 
                     {/* Mobile Menu Button */}
@@ -135,9 +139,15 @@ export default function Navbar() {
                                         {link.title}
                                     </a>
                                 ))}
-                                <Button className="bg-blue-600 hover:bg-blue-700 text-white mt-2 transition duration-300 w-full">
-                                    Book Demo
-                                </Button>
+                                <a
+                                    key="Book Demo"
+                                    href="#contact"
+                                    className=""
+                                >
+                                    <Button className="bg-blue-600 hover:bg-blue-700 text-white mt-2 transition duration-300 w-full">
+                                        Book Demo
+                                    </Button>
+                                </a>
                             </div>
                         </motion.div>
                     )}
