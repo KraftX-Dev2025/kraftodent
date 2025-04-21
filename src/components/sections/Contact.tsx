@@ -11,27 +11,54 @@ export default function Contact() {
         phone: "",
         cityState: "",
         locationLink: "",
-        practiceSize: "1-3 Dentists"
+        practiceSize: "1-3 Dentists",
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
         const { id, value } = e.target;
-        setFormData(prevData => ({
+        setFormData((prevData) => ({
             ...prevData,
-            [id]: value
+            [id]: value,
         }));
+
+        // Clear error when user starts typing
+        if (errors[id]) {
+            setErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors[id];
+                return newErrors;
+            });
+        }
     };
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
         if (!formData.name.trim()) newErrors.name = "Full name is required";
-        if (!formData.businessName.trim()) newErrors.businessName = "Business name is required";
-        if (!formData.email.trim()) newErrors.email = "Email is required";
-        if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-        if (!formData.cityState.trim()) newErrors.cityState = "City and state are required";
-        
+        if (!formData.businessName.trim())
+            newErrors.businessName = "Business name is required";
+
+        if (!formData.email.trim()) {
+            newErrors.email = "Email is required";
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = "Please enter a valid email";
+        }
+
+        if (!formData.phone.trim()) {
+            newErrors.phone = "Phone number is required";
+        } else if (
+            !/^[0-9+\-\s]{10,15}$/.test(formData.phone.replace(/\s+/g, ""))
+        ) {
+            newErrors.phone = "Please enter a valid phone number";
+        }
+
+        if (!formData.cityState.trim())
+            newErrors.cityState = "City and state are required";
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -50,33 +77,41 @@ export default function Contact() {
         return encodeURIComponent(message);
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         if (validateForm()) {
-            // Generate WhatsApp URL with the message
-            const whatsappUrl = `https://wa.me/919822296812?text=${generateWhatsAppMessage()}`;
-            
-            // Open WhatsApp in a new tab
-            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-            
-            // Optional: Reset the form after successful submission
-            setFormData({
-                name: "",
-                businessName: "",
-                email: "",
-                phone: "",
-                cityState: "",
-                locationLink: "",
-                practiceSize: "1-3 Dentists"
-            });
+            setIsSubmitting(true);
+
+            try {
+                // Generate WhatsApp URL with the message
+                const whatsappUrl = `https://wa.me/919822296812?text=${generateWhatsAppMessage()}`;
+
+                // Open WhatsApp in a new tab
+                window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+
+                // Reset the form after successful submission
+                setFormData({
+                    name: "",
+                    businessName: "",
+                    email: "",
+                    phone: "",
+                    cityState: "",
+                    locationLink: "",
+                    practiceSize: "1-3 Dentists",
+                });
+            } catch (error) {
+                console.error("Error submitting form:", error);
+            } finally {
+                setIsSubmitting(false);
+            }
         } else {
             // Scroll to the first error
             const firstErrorField = Object.keys(errors)[0];
             if (firstErrorField) {
-                document.getElementById(firstErrorField)?.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'center'
+                document.getElementById(firstErrorField)?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
                 });
             }
         }
@@ -85,16 +120,16 @@ export default function Contact() {
     return (
         <section
             id="contact"
-            className="py-24 bg-gradient-to-r from-blue-50 to-indigo-100 relative overflow-hidden"
+            className="py-16 md:py-20 bg-gradient-to-r from-blue-50 to-indigo-100 relative overflow-hidden"
         >
-            {/* Animated Background */}
+            {/* Simplified Background Animation */}
             <div className="absolute inset-0 overflow-hidden">
                 <svg
                     className="absolute w-full h-full"
                     viewBox="0 0 100 100"
                     preserveAspectRatio="none"
                 >
-                    {[...Array(5)].map((_, i) => (
+                    {[...Array(3)].map((_, i) => (
                         <motion.path
                             key={i}
                             d={`M0,${20 + i * 15} C${30 + i * 10},${
@@ -121,7 +156,7 @@ export default function Contact() {
                 </svg>
             </div>
 
-            <div className="container mx-auto px-6 relative z-10">
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
                 <div className="max-w-lg mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -130,12 +165,12 @@ export default function Contact() {
                         viewport={{ once: true }}
                         className="text-center mb-8"
                     >
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                            Transform Your Practice Today
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3 md:mb-4">
+                            Ready to Supercharge Your Dental Front Desk?
                         </h2>
-                        <p className="text-gray-600 text-lg">
-                            Join hundreds of dental practices across India that
-                            have revolutionized their operations with Kraftodent
+                        <p className="text-base md:text-lg text-gray-600">
+                            Try KraftODent Free for 14 Days — No Credit Card
+                            Needed
                         </p>
                     </motion.div>
 
@@ -144,15 +179,15 @@ export default function Contact() {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2, duration: 0.8 }}
                         viewport={{ once: true }}
-                        className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100"
+                        className="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-blue-100"
                     >
-                        <form className="space-y-6" onSubmit={handleSubmit}>
+                        <form className="space-y-5" onSubmit={handleSubmit}>
                             <div>
                                 <label
                                     htmlFor="name"
                                     className="block text-sm font-medium text-gray-700"
                                 >
-                                 Name
+                                    Name
                                 </label>
                                 <input
                                     type="text"
@@ -161,10 +196,16 @@ export default function Contact() {
                                     value={formData.name}
                                     onChange={handleChange}
                                     className={`mt-1 block w-full rounded-md border ${
-                                        errors.name ? "border-red-500" : "border-gray-300"
+                                        errors.name
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                     } px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600`}
                                 />
-                                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                                {errors.name && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {errors.name}
+                                    </p>
+                                )}
                             </div>
 
                             <div>
@@ -181,10 +222,16 @@ export default function Contact() {
                                     value={formData.businessName}
                                     onChange={handleChange}
                                     className={`mt-1 block w-full rounded-md border ${
-                                        errors.businessName ? "border-red-500" : "border-gray-300"
+                                        errors.businessName
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                     } px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600`}
                                 />
-                                {errors.businessName && <p className="text-red-500 text-xs mt-1">{errors.businessName}</p>}
+                                {errors.businessName && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {errors.businessName}
+                                    </p>
+                                )}
                             </div>
 
                             <div>
@@ -201,10 +248,16 @@ export default function Contact() {
                                     value={formData.email}
                                     onChange={handleChange}
                                     className={`mt-1 block w-full rounded-md border ${
-                                        errors.email ? "border-red-500" : "border-gray-300"
+                                        errors.email
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                     } px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600`}
                                 />
-                                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                                {errors.email && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {errors.email}
+                                    </p>
+                                )}
                             </div>
 
                             <div>
@@ -221,10 +274,16 @@ export default function Contact() {
                                     value={formData.phone}
                                     onChange={handleChange}
                                     className={`mt-1 block w-full rounded-md border ${
-                                        errors.phone ? "border-red-500" : "border-gray-300"
+                                        errors.phone
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                     } px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600`}
                                 />
-                                {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                                {errors.phone && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {errors.phone}
+                                    </p>
+                                )}
                             </div>
 
                             <div>
@@ -241,10 +300,16 @@ export default function Contact() {
                                     value={formData.cityState}
                                     onChange={handleChange}
                                     className={`mt-1 block w-full rounded-md border ${
-                                        errors.cityState ? "border-red-500" : "border-gray-300"
+                                        errors.cityState
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                     } px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600`}
                                 />
-                                {errors.cityState && <p className="text-red-500 text-xs mt-1">{errors.cityState}</p>}
+                                {errors.cityState && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {errors.cityState}
+                                    </p>
+                                )}
                             </div>
 
                             <div>
@@ -252,7 +317,7 @@ export default function Contact() {
                                     htmlFor="locationLink"
                                     className="block text-sm font-medium text-gray-700"
                                 >
-                                    Google Maps Link
+                                    Google Maps Link (Optional)
                                 </label>
                                 <input
                                     type="url"
@@ -290,10 +355,15 @@ export default function Contact() {
                             >
                                 <Button
                                     type="submit"
-                                    className="w-full space-x-2 md:w-[14rem] bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-bold transition duration-300 "
+                                    disabled={isSubmitting}
+                                    className="w-full space-x-2 md:w-auto md:px-8 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-base md:text-lg font-bold transition duration-300"
                                 >
-                                    <MessageSquare size={24}/>
-                                    <span>Book a Demo</span>
+                                    <MessageSquare size={20} />
+                                    <span>
+                                        {isSubmitting
+                                            ? "Processing..."
+                                            : "Book Your Free Demo Now"}
+                                    </span>
                                 </Button>
                             </motion.div>
                         </form>
@@ -305,7 +375,7 @@ export default function Contact() {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4, duration: 0.8 }}
                         viewport={{ once: true }}
-                        className="mt-8 text-center"
+                        className="mt-6 md:mt-8 text-center"
                     >
                         <p className="text-gray-600 mb-2">
                             Or reach us directly:

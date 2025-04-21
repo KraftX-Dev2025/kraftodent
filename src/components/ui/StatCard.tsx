@@ -24,20 +24,19 @@ export default function StatCard({
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
             whileHover={{
-                scale: 1.05,
+                scale: 1.03,
                 boxShadow:
-                    "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                    "0 10px 15px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.04)",
             }}
-            className="p-8 bg-white rounded-xl shadow-lg transition-all duration-300 text-center border border-blue-50 hover:border-blue-200"
+            className="p-6 md:p-8 bg-white rounded-xl shadow-md transition-all duration-300 text-center border border-blue-50 hover:border-blue-200 h-full"
         >
             <motion.div
-                className="flex justify-center mb-6"
+                className="flex justify-center mb-4 md:mb-6"
                 whileHover={{
-                    scale: 1.1,
-                    rotate: 5,
+                    scale: 1.05,
                 }}
             >
-                <div className="p-4 rounded-full bg-blue-50 text-blue-600">
+                <div className="p-3 md:p-4 rounded-full bg-blue-50 text-blue-600">
                     {icon}
                 </div>
             </motion.div>
@@ -47,7 +46,7 @@ export default function StatCard({
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
                 viewport={{ once: true }}
-                className="text-4xl font-bold text-blue-600 mb-2"
+                className="text-2xl md:text-4xl font-bold text-blue-600 mb-2"
             >
                 {endValue ? (
                     <CountUp
@@ -61,7 +60,7 @@ export default function StatCard({
                 )}
             </motion.div>
 
-            <p className="text-gray-600">{label}</p>
+            <p className="text-sm md:text-base text-gray-600">{label}</p>
         </motion.div>
     );
 }

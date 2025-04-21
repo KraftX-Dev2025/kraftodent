@@ -10,10 +10,12 @@ import CaseStudies from "@/components/sections/CaseStudies";
 import Benefits from "@/components/sections/Benefits";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
+import FAQ from "@/components/sections/FAQ";
+import CTABanner from "@/components/sections/CTABanner";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
-// Dynamically import the Hero component with client-side only
+// Dynamically import components that need client-side only rendering
 const Hero = dynamic(() => import("@/components/sections/Hero"), {
     ssr: false,
 });
@@ -39,11 +41,14 @@ export default function Home() {
 
                 const targetElement = document.querySelector(anchor.hash);
                 if (targetElement) {
+                    const navbarHeight =
+                        document.querySelector("header")?.offsetHeight || 80;
+
                     window.scrollTo({
                         top:
                             targetElement.getBoundingClientRect().top +
                             window.scrollY -
-                            100, // Offset for fixed header
+                            navbarHeight, // Offset for fixed header
                         behavior: "smooth",
                     });
 
@@ -65,11 +70,13 @@ export default function Home() {
             <main className="min-h-screen bg-white">
                 <Navbar />
                 <Hero />
+                <Benefits />
                 <Features />
                 <Product />
                 <Analytics />
                 <CaseStudies />
-                <Benefits />
+                <CTABanner />
+                <FAQ />
                 <Contact />
                 <Footer />
                 <ScrollToTop />

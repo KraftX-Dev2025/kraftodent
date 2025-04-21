@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-    Sparkles,
     Facebook,
     Twitter,
     Instagram,
@@ -51,56 +50,40 @@ export default function Footer() {
     ];
 
     return (
-        <footer className="bg-blue-500 text-white">
-            <div className="container mx-auto px-6">
-                <div className="pt-16 pb-12">
+        <footer className="bg-blue-600 text-white">
+            <div className="container mx-auto px-4 sm:px-6">
+                <div className="pt-12 pb-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
                         {/* Logo and Description */}
                         <div className="lg:col-span-2">
-                            <motion.div
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.5 }}
-                                className="flex items-center"
-                            >
-                                <img
-                                    src="/logo.png"
-                                    alt="Kraftodent Logo"
-                                    className="h-18 w-auto bg-white rounded-xl mb-6"
-                                />
-                            </motion.div>
-                            {/* <motion.div
+                            <motion.h2
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5 }}
                                 viewport={{ once: true }}
-                                className="flex items-center mb-4"
+                                className="text-2xl font-bold mb-4"
                             >
-                                <Sparkles className="h-8 w-8" />
-                                <span className="ml-2 text-xl font-bold">
-                                    Kraftodent
-                                </span>
-                            </motion.div> */}
+                                KraftODent
+                            </motion.h2>
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1, duration: 0.5 }}
                                 viewport={{ once: true }}
-                                className="mb-6 max-w-sm"
+                                className="mb-6 max-w-sm text-blue-100"
                             >
-                                Transforming dental practices across India with
-                                our AI-powered receptionist and practice
-                                management solutions.
+                                India's First Dental AI Assistant That Works
+                                24/7 So You Don't Have To.
                             </motion.p>
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2, duration: 0.5 }}
                                 viewport={{ once: true }}
-                                className="flex items-center space-x-2 mb-6"
+                                className="flex items-center space-x-2 mb-4"
                             >
-                                <Mail className="h-4 w-4" />
-                                <span className="text-sm">
+                                <Mail className="h-4 w-4 text-blue-200" />
+                                <span className="text-sm text-blue-100">
                                     contact@kraftxworks.com
                                 </span>
                             </motion.div>
@@ -111,8 +94,8 @@ export default function Footer() {
                                 viewport={{ once: true }}
                                 className="flex items-center space-x-2"
                             >
-                                <Phone className="h-4 w-4" />
-                                <span className="text-sm">
+                                <Phone className="h-4 w-4 text-blue-200" />
+                                <span className="text-sm text-blue-100">
                                     +91 9822296812
                                 </span>
                             </motion.div>
@@ -128,11 +111,11 @@ export default function Footer() {
                                         duration: 0.5,
                                     }}
                                     viewport={{ once: true }}
-                                    className="text-lg font-semibold mb-4"
+                                    className="text-lg font-semibold mb-4 text-white"
                                 >
                                     {column.title}
                                 </motion.h3>
-                                <ul className="space-y-3">
+                                <ul className="space-y-2">
                                     {column.links.map((link, linkIndex) => (
                                         <motion.li
                                             key={linkIndex}
@@ -148,7 +131,7 @@ export default function Footer() {
                                         >
                                             <a
                                                 href={link.href}
-                                                className="hover:text-blue-400 transition-colors text-sm"
+                                                className="text-blue-100 hover:text-white transition-colors text-sm"
                                             >
                                                 {link.text}
                                             </a>
@@ -161,16 +144,16 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="border-t py-6">
+                <div className="border-t border-blue-500 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center">
                         <motion.div
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
                             transition={{ duration: 0.5 }}
                             viewport={{ once: true }}
-                            className="text-sm mb-4 md:mb-0"
+                            className="text-sm mb-4 md:mb-0 text-blue-100"
                         >
-                            © {currentYear} Kraftodent. All rights reserved.
+                            © {currentYear} KraftODent. All rights reserved.
                         </motion.div>
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -183,9 +166,10 @@ export default function Footer() {
                                 <a
                                     key={index}
                                     href={link.href}
-                                    className="hover:text-blue-200 hover:scale-150 transition-colors"
-                                    aria-label={`Social media link ${index + 1
-                                        }`}
+                                    className="text-blue-200 hover:text-white hover:scale-110 transition-all"
+                                    aria-label={`Social media link ${
+                                        index + 1
+                                    }`}
                                 >
                                     {link.icon}
                                 </a>

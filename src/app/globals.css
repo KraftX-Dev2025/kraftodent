@@ -261,3 +261,185 @@ textarea:focus-visible {
         @apply bg-background text-foreground;
     }
 }
+
+/* Add these optimized styles to your globals.css file */
+
+/* Optimize responsive font sizes */
+html {
+    font-size: 15px; /* Slightly reduced base font size for better fit on smaller screens */
+    scroll-behavior: smooth;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* Optimize container padding for small screens */
+.container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+/* Optimize vertical spacing */
+.py-16 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.py-20 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+.py-24 {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+    .py-16 {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    .py-20 {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+
+    .py-24 {
+        padding-top: 6rem;
+        padding-bottom: 6rem;
+    }
+}
+
+/* Better scrollbar for improved UX */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2563eb;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1d4ed8;
+}
+
+/* Add text highlight style */
+::selection {
+    background-color: rgba(37, 99, 235, 0.2);
+}
+
+/* Reduced animation performance for better performance */
+.animate-float {
+    animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Focus styles for better accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* Blue glow effect with reduced intensity */
+.blue-glow {
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+}
+
+.blue-glow:hover {
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+}
+
+/* Gradient text for special headings */
+.gradient-text {
+    background: linear-gradient(90deg, #2563eb, #4f46e5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Add styles for buttons to ensure consistent sizing on all screens */
+.btn-responsive {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+    .btn-responsive {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Add performance optimizations */
+.will-change-transform {
+    will-change: transform;
+}
+
+.backface-visibility-hidden {
+    backface-visibility: hidden;
+}
+
+/* Enhanced card styles with consistent heights */
+.card-equal-height {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-equal-height .card-content {
+    flex-grow: 1;
+}
+
+/* Fix for touch devices */
+@media (hover: none) {
+    .hover\:scale-105:hover {
+        transform: none !important;
+    }
+
+    .hover\:y-2:hover {
+        transform: none !important;
+    }
+}
+
+/* Reduce motion for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
