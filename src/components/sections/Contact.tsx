@@ -14,9 +14,9 @@ export default function Contact() {
         practiceSize: "1-3 Dentists"
     });
 
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
         setFormData(prevData => ({
             ...prevData,
@@ -25,7 +25,7 @@ export default function Contact() {
     };
 
     const validateForm = () => {
-        const newErrors = {};
+        const newErrors: Record<string, string> = {};
         if (!formData.name.trim()) newErrors.name = "Full name is required";
         if (!formData.businessName.trim()) newErrors.businessName = "Business name is required";
         if (!formData.email.trim()) newErrors.email = "Email is required";
@@ -50,7 +50,7 @@ export default function Contact() {
         return encodeURIComponent(message);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         
         if (validateForm()) {
