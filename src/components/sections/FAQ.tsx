@@ -64,7 +64,7 @@ export default function FAQ() {
     // FAQ data
     const faqs = [
         {
-            question: "Does KraftODent integrate with my dental software?",
+            question: "Does Kraftodent integrate with my dental software?",
             answer: "Yes, we support most major practice management software platforms used in India, including Dentrix, Carestack, and more. Our team will ensure a smooth integration with your existing systems during the setup process, and we're constantly adding support for additional platforms.",
         },
         {
@@ -77,15 +77,15 @@ export default function FAQ() {
         },
         {
             question: "How long does it take to set up?",
-            answer: "Most dental practices are up and running with KraftODent within 2-3 days. Our onboarding team handles the integration with your existing software, trains your staff, and makes sure everything is working perfectly before going live.",
+            answer: "Most dental practices are up and running with Kraftodent within 2-3 days. Our onboarding team handles the integration with your existing software, trains your staff, and makes sure everything is working perfectly before going live.",
         },
         {
-            question: "What languages does KraftODent support?",
-            answer: "KraftODent currently supports English, Hindi, Marathi, Gujarati, Tamil, and Telugu. We're adding more Indian languages regularly based on customer demand.",
+            question: "What languages does Kraftodent support?",
+            answer: "Kraftodent currently supports English, Hindi, Marathi, Gujarati, Tamil, and Telugu. We're adding more Indian languages regularly based on customer demand.",
         },
         {
             question: "How secure is patient data?",
-            answer: "We take data security extremely seriously. KraftODent is fully HIPAA-compliant and uses advanced encryption for all patient conversations and data. Your patient information remains private, secure, and is never shared with third parties.",
+            answer: "We take data security extremely seriously. Kraftodent is fully HIPAA-compliant and uses advanced encryption for all patient conversations and data. Your patient information remains private, secure, and is never shared with third parties.",
         },
     ];
 
@@ -111,7 +111,7 @@ export default function FAQ() {
                         Frequently Asked Questions
                     </h2>
                     <p className="text-base md:text-lg text-gray-600">
-                        Everything you need to know about KraftODent for your
+                        Everything you need to know about Kraftodent for your
                         dental practice
                     </p>
                 </motion.div>

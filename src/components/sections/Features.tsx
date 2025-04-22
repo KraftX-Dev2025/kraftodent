@@ -33,7 +33,7 @@ export default function Features() {
             icon: <Layers className="h-8 w-8" />,
             title: "Seamless Software Integration",
             description:
-                "KraftODent plugs into most practice management platforms effortlessly with minimal setup time.",
+                "Kraftodent plugs into most practice management platforms effortlessly with minimal setup time.",
         },
         {
             icon: <Bot className="h-8 w-8" />,

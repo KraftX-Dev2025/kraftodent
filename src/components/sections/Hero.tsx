@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
-import Image from "next/image";
 
 export default function Hero() {
     const { scrollYProgress } = useScroll();
@@ -31,7 +30,7 @@ export default function Hero() {
     return (
         <motion.section
             style={{ opacity: heroOpacity, y: heroY }}
-            className="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden bg-gradient-to-b from-white to-blue-50"
+            className="relative min-h-[85vh] flex items-center justify-center pt-16 pb-12 overflow-hidden bg-gradient-to-b from-white to-blue-50"
         >
             {/* Animated Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
@@ -61,7 +60,7 @@ export default function Hero() {
             </div>
 
             <div className="container mx-auto px-6 relative z-10">
-                <div className="text-center max-w-4xl mx-auto mb-12">
+                <div className="text-center max-w-4xl mx-auto mb-8">
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -87,7 +86,7 @@ export default function Hero() {
                     >
                         <a
                             href="#contact"
-                            aria-label="Book a demo of KraftODent AI Receptionist"
+                            aria-label="Book a demo of Kraftodent AI Receptionist"
                         >
                             <Button
                                 size="lg"
@@ -98,7 +97,7 @@ export default function Hero() {
                         </a>
                         <a
                             href="#example"
-                            aria-label="See KraftODent AI in action with feature demonstration"
+                            aria-label="See Kraftodent AI in action with feature demonstration"
                         >
                             <Button
                                 size="lg"
@@ -110,33 +109,6 @@ export default function Hero() {
                             </Button>
                         </a>
                     </motion.div>
-                </div>
-
-                {/* Wave Animation */}
-                <div className="w-full h-32 relative">
-                    {isMounted && (
-                        <motion.svg
-                            className="w-full h-full absolute bottom-0"
-                            viewBox="0 0 1200 200"
-                            preserveAspectRatio="none"
-                        >
-                            <motion.path
-                                d="M0,40 C300,100 600,0 1200,40 L1200,200 L0,200 Z"
-                                fill="rgba(255, 255, 255, 0.3)"
-                                animate={{
-                                    d: [
-                                        "M0,40 C300,100 600,0 1200,40 L1200,200 L0,200 Z",
-                                        "M0,20 C300,80 600,20 1200,20 L1200,200 L0,200 Z",
-                                    ],
-                                }}
-                                transition={{
-                                    duration: 8,
-                                    repeat: Infinity,
-                                    repeatType: "reverse",
-                                }}
-                            />
-                        </motion.svg>
-                    )}
                 </div>
             </div>
         </motion.section>

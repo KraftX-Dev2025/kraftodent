@@ -1,9 +1,69 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
+html,
+body {
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+}
 
-html {
-    scroll-behavior: smooth;
+/* Ensure SVG animations don't cause overflow */
+svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Better container padding for small screens */
+@media (max-width: 640px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* Improve responsive behavior for grid layouts */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+}
+
+/* Fix for animated background elements that might cause overflow */
+.overflow-hidden {
+    overflow: hidden !important;
+}
+
+/* Ensure images don't cause overflow */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Fix for section padding on mobile */
+@media (max-width: 768px) {
+    section {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Fix for Framer Motion animations potentially causing overflow */
+.motion-safe\:animate-none {
+    animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        animation-delay: -0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 @theme {

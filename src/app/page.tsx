@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
-import Head from "next/head";
 import Script from "next/script";
 import Navbar from "@/components/layout/Navbar";
 import Features from "@/components/sections/Features";
@@ -13,7 +12,6 @@ import Benefits from "@/components/sections/Benefits";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import Example from "@/components/sections/Example";
-import DataProtection from "@/components/sections/DataProtection";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
@@ -102,7 +100,6 @@ export default function Home() {
                 <Example />
                 <Features />
                 <Product />
-                <DataProtection />
                 <MissedCalls />
                 <CaseStudies />
                 <Benefits />

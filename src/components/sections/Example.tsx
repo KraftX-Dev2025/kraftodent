@@ -1,7 +1,6 @@
 // src/components/sections/Example.tsx
 import React from "react";
 import { motion } from "framer-motion";
-import { Phone } from "lucide-react";
 
 export default function Example() {
     return (
@@ -15,9 +14,9 @@ export default function Example() {
                     className="text-center max-w-3xl mx-auto mb-12"
                 >
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3 md:mb-4">
-                        Try KraftODent, the AI Dental Receptionist
+                        Try Kraftodent, the AI Dental Receptionist
                     </h2>
-                    <p className="text-base md:text-lg text-gray-600">
+                    <p className="text-sm md:text-base text-gray-600">
                         See our AI dental receptionist in action with a quick
                         test call or play the video below.
                     </p>
@@ -74,7 +73,7 @@ export default function Example() {
                                 </svg>
                             </div>
                             <p className="text-white text-xl text-center">
-                                My name is KraftODent, an advanced AI reception
+                                My name is Kraftodent, an advanced AI reception
                                 assistant.
                             </p>
 
@@ -159,14 +158,8 @@ export default function Example() {
 
                 <div className="text-center mt-8">
                     <p className="text-gray-600">
-                        Want to try it yourself? Call{" "}
-                        <a
-                            href="tel:+919822296812"
-                            className="text-blue-600 font-semibold"
-                        >
-                            +91 9822296812
-                        </a>{" "}
-                        to experience our AI receptionist.
+                        Want to try it yourself? Contact us to experience our AI
+                        receptionist in action.
                     </p>
                 </div>
             </div>

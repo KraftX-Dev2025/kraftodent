@@ -47,13 +47,13 @@ export default function Product() {
                     </p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:px-48">
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8 }}
                         viewport={{ once: true }}
-                        className="relative"
+                        className="relative max-w-md mx-auto md:mx-0"
                     >
                         <div className="absolute -inset-4 bg-blue-600/10 rounded-3xl blur-xl transform -rotate-6"></div>
                         <div className="relative bg-white p-5 md:p-6 rounded-2xl shadow-xl overflow-hidden border border-blue-100">
@@ -72,7 +72,7 @@ export default function Product() {
                                         }}
                                         className="relative"
                                     >
-                                        <Bot className="h-24 w-24 md:h-32 md:w-32 text-blue-600" />
+                                        <Bot className="h-20 w-20 md:h-24 md:w-24 text-blue-600" />
 
                                         {/* Animated rings - reduced for performance */}
                                         {[...Array(2)].map((_, i) => (
@@ -188,7 +188,7 @@ export default function Product() {
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8 }}
                         viewport={{ once: true }}
-                        className="space-y-6 md:space-y-8"
+                        className="space-y-6 md:space-y-8 pt-10 md:pt-0"
                     >
                         <div className="flex items-start space-x-4">
                             <div className="flex-shrink-0 bg-blue-50 p-3 rounded-lg text-blue-600">

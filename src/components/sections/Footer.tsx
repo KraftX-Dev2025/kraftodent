@@ -1,14 +1,7 @@
 // src/components/sections/Footer.tsx
 import React from "react";
 import { motion } from "framer-motion";
-import {
-    Facebook,
-    Twitter,
-    Instagram,
-    Linkedin,
-    Mail,
-    Phone,
-} from "lucide-react";
+import { Facebook, Twitter, Instagram, Linkedin, Mail } from "lucide-react";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -76,7 +69,7 @@ export default function Footer() {
                                 viewport={{ once: true }}
                                 className="text-2xl font-bold mb-4"
                             >
-                                KraftODent
+                                Kraftodent
                             </motion.h2>
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}
@@ -98,18 +91,6 @@ export default function Footer() {
                                 <Mail className="h-4 w-4 text-blue-200" />
                                 <span className="text-sm text-blue-100">
                                     contact@kraftxworks.com
-                                </span>
-                            </motion.div>
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3, duration: 0.5 }}
-                                viewport={{ once: true }}
-                                className="flex items-center space-x-2"
-                            >
-                                <Phone className="h-4 w-4 text-blue-200" />
-                                <span className="text-sm text-blue-100">
-                                    +91 9822296812
                                 </span>
                             </motion.div>
                         </div>
@@ -166,7 +147,7 @@ export default function Footer() {
                             viewport={{ once: true }}
                             className="text-sm mb-4 md:mb-0 text-blue-100"
                         >
-                            © {currentYear} KraftODent. All rights reserved.
+                            © {currentYear} Kraftodent. All rights reserved.
                         </motion.div>
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -180,7 +161,7 @@ export default function Footer() {
                                     key={index}
                                     href={link.href}
                                     className="text-blue-200 hover:text-white hover:scale-110 transition-all"
-                                    aria-label={`Visit KraftODent ${link.label} page`}
+                                    aria-label={`Visit Kraftodent ${link.label} page`}
                                     target={
                                         link.href.startsWith("http")
                                             ? "_blank"

@@ -95,7 +95,7 @@ export default function Contact() {
             }
 
             // Generate WhatsApp URL with the message
-            const whatsappUrl = `https://wa.me/919822296812?text=${generateWhatsAppMessage()}`;
+            const whatsappUrl = `https://wa.me/CONTACT_NUMBER?text=${generateWhatsAppMessage()}`;
 
             // Open WhatsApp in a new tab
             window.open(whatsappUrl, "_blank", "noopener,noreferrer");
@@ -145,7 +145,6 @@ export default function Contact() {
                         provider: {
                             "@type": "Organization",
                             name: "Kraftodent",
-                            telephone: "+919822296812",
                             email: "contact@kraftxworks.com",
                         },
                         areaServed: {
@@ -524,13 +523,6 @@ export default function Contact() {
                                 className="text-blue-600 font-semibold hover:underline"
                             >
                                 contact@kraftxworks.com
-                            </a>
-                            <span className="hidden sm:inline">|</span>
-                            <a
-                                href="tel:+919822296812"
-                                className="text-blue-600 font-semibold hover:underline"
-                            >
-                                +91 9822296812
                             </a>
                         </div>
                     </motion.div>

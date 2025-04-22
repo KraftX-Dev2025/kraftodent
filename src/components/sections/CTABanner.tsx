@@ -48,7 +48,7 @@ export default function CTABanner() {
                         Ready to Supercharge Your Dental Front Desk?
                     </h2>
                     <p className="text-lg md:text-xl text-blue-100 mb-8 md:mb-10">
-                        Try KraftODent Free for 14 Days — No Credit Card Needed
+                        Try Kraftodent Free for 14 Days — No Credit Card Needed
                     </p>
                     <motion.div
                         whileHover={{ scale: 1.05 }}
