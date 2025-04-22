@@ -7,13 +7,16 @@ import Script from "next/script";
 import Navbar from "@/components/layout/Navbar";
 import Features from "@/components/sections/Features";
 import Product from "@/components/sections/Product";
-import Analytics from "@/components/sections/Analytics";
+import MissedCalls from "@/components/sections/MissedCalls";
 import CaseStudies from "@/components/sections/CaseStudies";
 import Benefits from "@/components/sections/Benefits";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
+import Example from "@/components/sections/Example";
+import DataProtection from "@/components/sections/DataProtection";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import { ThemeProvider } from "@/components/ThemeProvider";
+
 // Dynamically import the Hero component with client-side only
 const Hero = dynamic(() => import("@/components/sections/Hero"), {
     ssr: false,
@@ -96,9 +99,11 @@ export default function Home() {
             <main className="min-h-screen bg-white">
                 <Navbar />
                 <Hero />
+                <Example />
                 <Features />
                 <Product />
-                <Analytics />
+                <DataProtection />
+                <MissedCalls />
                 <CaseStudies />
                 <Benefits />
                 <Contact />

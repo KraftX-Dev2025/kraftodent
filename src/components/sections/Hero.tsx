@@ -18,7 +18,7 @@ export default function Hero() {
         setIsMounted(true);
     }, []);
 
-    // Define fixed background bubble positions instead of using random values
+    // Define fixed background bubble positions
     const backgroundBubbles = [
         { width: 180, height: 180, x: "10%", y: "15%" },
         { width: 250, height: 250, x: "30%", y: "25%" },
@@ -26,20 +26,6 @@ export default function Hero() {
         { width: 200, height: 200, x: "85%", y: "40%" },
         { width: 300, height: 300, x: "20%", y: "60%" },
         { width: 280, height: 280, x: "50%", y: "75%" },
-        { width: 170, height: 170, x: "80%", y: "80%" },
-        { width: 220, height: 220, x: "40%", y: "85%" },
-        { width: 190, height: 190, x: "90%", y: "10%" },
-        { width: 160, height: 160, x: "15%", y: "45%" },
-        { width: 240, height: 240, x: "75%", y: "50%" },
-        { width: 320, height: 320, x: "55%", y: "30%" },
-        { width: 200, height: 200, x: "25%", y: "35%" },
-        { width: 270, height: 270, x: "60%", y: "65%" },
-        { width: 210, height: 210, x: "5%", y: "70%" },
-        { width: 230, height: 230, x: "45%", y: "5%" },
-        { width: 340, height: 340, x: "65%", y: "90%" },
-        { width: 260, height: 260, x: "35%", y: "55%" },
-        { width: 140, height: 140, x: "95%", y: "60%" },
-        { width: 290, height: 290, x: "5%", y: "95%" },
     ];
 
     return (
@@ -75,238 +61,82 @@ export default function Hero() {
             </div>
 
             <div className="container mx-auto px-6 relative z-10">
-                <div className="flex flex-col md:flex-row items-center">
-                    <motion.div
+                <div className="text-center max-w-4xl mx-auto mb-12">
+                    <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="md:w-1/2"
+                        className="text-4xl md:text-6xl font-bold text-blue-600 mb-4"
                     >
-                        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                            <span className="text-blue-600">Kraftodent AI</span>{" "}
-                            Receptionist for Dental Practices in India
-                        </h1>
-                        <p className="text-xl text-gray-600 mb-8 max-w-2xl">
-                            Transform your dental practice with Kraftodent's
-                            intelligent automation. Handle scheduling, patient
-                            communication, and practice management with AI
-                            precision. Save ₹250,000 annually and boost patient
-                            satisfaction to 98%.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <a
-                                href="#contact"
-                                aria-label="Book a demo of Kraftodent AI Receptionist"
-                                className=""
-                            >
-                                <Button
-                                    size="lg"
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-lg text-lg font-semibold transition duration-300"
-                                >
-                                    Book Demo
-                                </Button>
-                            </a>
-                            <a
-                                href="#features"
-                                aria-label="See Kraftodent AI in action with feature demonstration"
-                                className=""
-                            >
-                                <Button
-                                    size="lg"
-                                    variant="outline"
-                                    className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 flex items-center gap-2"
-                                >
-                                    <Play size={20} className="text-blue-600" />
-                                    See it in Action
-                                </Button>
-                            </a>
-                        </div>
-                    </motion.div>
-
+                        Start booking more patients today
+                    </motion.h1>
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="text-xl text-gray-600 mb-8"
+                    >
+                        Never lose a new patient to voicemail again. Schedule
+                        patients 24/7.
+                    </motion.p>
                     <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.3 }}
-                        className="md:w-1/2 mt-10 md:mt-0"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                        className="flex flex-col sm:flex-row gap-4 justify-center"
                     >
-                        <div className="relative">
-                            {isMounted ? (
-                                <motion.div
-                                    className="absolute inset-0 bg-blue-600 rounded-xl blur-2xl"
-                                    animate={{
-                                        opacity: [0.2, 0.4, 0.2],
-                                        scale: [0.8, 1, 0.8],
-                                    }}
-                                    transition={{
-                                        duration: 4,
-                                        repeat: Infinity,
-                                        repeatType: "reverse",
-                                    }}
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <div
-                                    className="absolute inset-0 bg-blue-600/30 rounded-xl blur-2xl"
-                                    aria-hidden="true"
-                                />
-                            )}
-                            <div className="relative bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl border border-blue-100">
-                                <div className="w-full aspect-square rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center overflow-hidden">
-                                    {isMounted ? (
-                                        <motion.div
-                                            animate={{
-                                                scale: [1, 1.05, 1],
-                                                rotate: [0, 5, 0, -5, 0],
-                                            }}
-                                            transition={{
-                                                duration: 8,
-                                                repeat: Infinity,
-                                                repeatType: "reverse",
-                                            }}
-                                            className="w-3/4 h-3/4 relative"
-                                        >
-                                            {/* AI Assistant Visualization */}
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-32 h-32 rounded-full bg-blue-600/20 flex items-center justify-center">
-                                                    <motion.div
-                                                        animate={{
-                                                            scale: [1, 1.2, 1],
-                                                        }}
-                                                        transition={{
-                                                            duration: 2,
-                                                            repeat: Infinity,
-                                                        }}
-                                                        className="w-24 h-24 rounded-full bg-blue-600/40 flex items-center justify-center"
-                                                    >
-                                                        <motion.div
-                                                            animate={{
-                                                                scale: [
-                                                                    1, 1.2, 1,
-                                                                ],
-                                                            }}
-                                                            transition={{
-                                                                duration: 1.5,
-                                                                repeat: Infinity,
-                                                            }}
-                                                            className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white"
-                                                        >
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                width="32"
-                                                                height="32"
-                                                                viewBox="0 0 24 24"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                strokeWidth="2"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                aria-label="AI assistant microphone icon"
-                                                            >
-                                                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-                                                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                                                <line
-                                                                    x1="12"
-                                                                    x2="12"
-                                                                    y1="19"
-                                                                    y2="22"
-                                                                ></line>
-                                                            </svg>
-                                                        </motion.div>
-                                                    </motion.div>
-                                                </div>
-                                            </div>
-
-                                            {/* Voice Waves */}
-                                            <div
-                                                className="absolute inset-0 flex items-center justify-center"
-                                                aria-hidden="true"
-                                            >
-                                                {[...Array(4)].map((_, i) => (
-                                                    <motion.div
-                                                        key={i}
-                                                        className="absolute w-full h-full rounded-full border-2 border-blue-600/30"
-                                                        animate={{
-                                                            scale: [0, 1],
-                                                            opacity: [1, 0],
-                                                        }}
-                                                        transition={{
-                                                            duration: 2,
-                                                            repeat: Infinity,
-                                                            delay: i * 0.5,
-                                                        }}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </motion.div>
-                                    ) : (
-                                        <div className="w-3/4 h-3/4 relative">
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-32 h-32 rounded-full bg-blue-600/20 flex items-center justify-center">
-                                                    <div className="w-24 h-24 rounded-full bg-blue-600/40 flex items-center justify-center">
-                                                        <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white">
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                width="32"
-                                                                height="32"
-                                                                viewBox="0 0 24 24"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                strokeWidth="2"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                aria-label="AI assistant microphone icon"
-                                                            >
-                                                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-                                                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                                                <line
-                                                                    x1="12"
-                                                                    x2="12"
-                                                                    y1="19"
-                                                                    y2="22"
-                                                                ></line>
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Chat bubbles */}
-                                <div className="mt-4 space-y-3">
-                                    <motion.div
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{
-                                            delay: 0.8,
-                                            duration: 0.5,
-                                        }}
-                                        className="bg-gray-100 rounded-lg p-3 max-w-[80%]"
-                                    >
-                                        <p className="text-sm">
-                                            I'd like to book an appointment for
-                                            next week
-                                        </p>
-                                    </motion.div>
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{
-                                            delay: 1.3,
-                                            duration: 0.5,
-                                        }}
-                                        className="bg-blue-600 rounded-lg p-3 max-w-[80%] ml-auto text-white"
-                                    >
-                                        <p className="text-sm">
-                                            I can schedule you for Tuesday at 2
-                                            PM. Does that work for you?
-                                        </p>
-                                    </motion.div>
-                                </div>
-                            </div>
-                        </div>
+                        <a
+                            href="#contact"
+                            aria-label="Book a demo of KraftODent AI Receptionist"
+                        >
+                            <Button
+                                size="lg"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 w-full sm:w-auto"
+                            >
+                                Book a Demo
+                            </Button>
+                        </a>
+                        <a
+                            href="#example"
+                            aria-label="See KraftODent AI in action with feature demonstration"
+                        >
+                            <Button
+                                size="lg"
+                                variant="outline"
+                                className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 flex items-center gap-2 w-full sm:w-auto"
+                            >
+                                <Play size={20} className="text-blue-600" />
+                                See it in Action
+                            </Button>
+                        </a>
                     </motion.div>
+                </div>
+
+                {/* Wave Animation */}
+                <div className="w-full h-32 relative">
+                    {isMounted && (
+                        <motion.svg
+                            className="w-full h-full absolute bottom-0"
+                            viewBox="0 0 1200 200"
+                            preserveAspectRatio="none"
+                        >
+                            <motion.path
+                                d="M0,40 C300,100 600,0 1200,40 L1200,200 L0,200 Z"
+                                fill="rgba(255, 255, 255, 0.3)"
+                                animate={{
+                                    d: [
+                                        "M0,40 C300,100 600,0 1200,40 L1200,200 L0,200 Z",
+                                        "M0,20 C300,80 600,20 1200,20 L1200,200 L0,200 Z",
+                                    ],
+                                }}
+                                transition={{
+                                    duration: 8,
+                                    repeat: Infinity,
+                                    repeatType: "reverse",
+                                }}
+                            />
+                        </motion.svg>
+                    )}
                 </div>
 
                 {/* Trusted By Section */}
@@ -314,7 +144,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.2, duration: 0.8 }}
-                    className="mt-20 text-center"
+                    className="mt-12 text-center"
                 >
                     <p className="text-black font-bold mb-6">
                         Trusted by hundreds of dental practices across India
@@ -362,7 +192,7 @@ export default function Hero() {
                                     href={practice.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    aria-label={`Visit ${practice.name} website - Kraftodent customer`}
+                                    aria-label={`Visit ${practice.name} website - KraftODent customer`}
                                     className="text-blue-700 font-semibold transition-colors duration-300 hover:scale-125"
                                 >
                                     {practice.name}
@@ -371,23 +201,6 @@ export default function Hero() {
                         ))}
                     </div>
                 </motion.div>
-
-                {/* SEO-focused rich snippet information - hidden visually but available to search engines */}
-                <div className="sr-only">
-                    <h2>
-                        AI Dental Receptionist Software for Indian Dental
-                        Practices
-                    </h2>
-                    <p>
-                        Kraftodent is the leading AI receptionist solution for
-                        dental practices in India. Our automated system handles
-                        appointment scheduling, patient communication, and
-                        practice management, reducing staff workload by 65% and
-                        saving ₹250,000 annually. Practices in Pune, Mumbai, and
-                        across India trust Kraftodent to improve their patient
-                        satisfaction rates to 98% while streamlining operations.
-                    </p>
-                </div>
             </div>
         </motion.section>
     );

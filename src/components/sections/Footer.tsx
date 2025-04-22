@@ -1,3 +1,4 @@
+// src/components/sections/Footer.tsx
 import React from "react";
 import { motion } from "framer-motion";
 import {
@@ -8,16 +9,27 @@ import {
     Mail,
     Phone,
 } from "lucide-react";
-import Image from "next/image";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
 
     const socialLinks = [
-        { icon: <Facebook className="h-5 w-5" />, href: "#" },
-        { icon: <Twitter className="h-5 w-5" />, href: "#" },
-        { icon: <Instagram className="h-5 w-5" />, href: "#" },
-        { icon: <Linkedin className="h-5 w-5" />, href: "#" },
+        {
+            icon: <Facebook className="h-5 w-5" />,
+            href: "#",
+            label: "Facebook",
+        },
+        { icon: <Twitter className="h-5 w-5" />, href: "#", label: "Twitter" },
+        {
+            icon: <Instagram className="h-5 w-5" />,
+            href: "#",
+            label: "Instagram",
+        },
+        {
+            icon: <Linkedin className="h-5 w-5" />,
+            href: "https://www.linkedin.com/company/kraftodent/",
+            label: "LinkedIn",
+        },
     ];
 
     const footerLinks = [
@@ -57,23 +69,15 @@ export default function Footer() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
                         {/* Logo and Description */}
                         <div className="lg:col-span-2">
-                            <motion.div
+                            <motion.h2
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5 }}
                                 viewport={{ once: true }}
-                                className="mb-6"
+                                className="text-2xl font-bold mb-4"
                             >
-                                <div className=" p-1 rounded-xl inline-block">
-                                    <Image
-                                        src="/Logo White.png"
-                                        alt="Company Logo"
-                                        width={100}
-                                        height={40}
-                                        className="h-auto"
-                                    />
-                                </div>
-                            </motion.div>
+                                KraftODent
+                            </motion.h2>
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -81,8 +85,8 @@ export default function Footer() {
                                 viewport={{ once: true }}
                                 className="mb-6 max-w-sm text-blue-100"
                             >
-                                India's First Dental AI Assistant that works
-                                24/7 so you don't have to.
+                                India's First Dental AI Assistant That Works
+                                24/7 So You Don't Have To.
                             </motion.p>
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
@@ -162,7 +166,7 @@ export default function Footer() {
                             viewport={{ once: true }}
                             className="text-sm mb-4 md:mb-0 text-blue-100"
                         >
-                            © {currentYear} Kraftodent. All rights reserved.
+                            © {currentYear} KraftODent. All rights reserved.
                         </motion.div>
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -176,9 +180,17 @@ export default function Footer() {
                                     key={index}
                                     href={link.href}
                                     className="text-blue-200 hover:text-white hover:scale-110 transition-all"
-                                    aria-label={`Social media link ${
-                                        index + 1
-                                    }`}
+                                    aria-label={`Visit KraftODent ${link.label} page`}
+                                    target={
+                                        link.href.startsWith("http")
+                                            ? "_blank"
+                                            : "_self"
+                                    }
+                                    rel={
+                                        link.href.startsWith("http")
+                                            ? "noopener noreferrer"
+                                            : ""
+                                    }
                                 >
                                     {link.icon}
                                 </a>
