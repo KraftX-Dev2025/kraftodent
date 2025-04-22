@@ -30,20 +30,7 @@ export default function Example() {
                     viewport={{ once: true }}
                     className="bg-black rounded-xl overflow-hidden shadow-xl max-w-4xl mx-auto relative"
                 >
-                    <div className="flex justify-between items-center p-4 border-b border-gray-800">
-                        <div className="text-white font-medium px-2 py-1 bg-blue-600 rounded text-sm">
-                            KraftODent.AI Demo
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <a
-                                href="tel:+919822296812"
-                                className="flex items-center text-white hover:text-blue-300 transition-colors"
-                            >
-                                <Phone className="h-5 w-5 mr-2" />
-                                <span className="text-lg">+91 9822296812</span>
-                            </a>
-                        </div>
-                    </div>
+                    <div className="flex justify-between items-center p-4 border-b border-gray-800"></div>
 
                     <div className="relative pb-[56.25%] h-0 overflow-hidden">
                         {/* This is a placeholder for the video. You would replace this with your actual video player */}

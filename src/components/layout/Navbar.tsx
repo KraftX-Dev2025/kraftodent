@@ -91,7 +91,7 @@ export default function Navbar() {
                         ))}
                         <a key="Book Demo" href="#contact" className="">
                             <Button className="bg-blue-600 hover:bg-blue-700 text-white transition duration-300 text-sm lg:text-base">
-                                Book Free Demo
+                                Book a Demo
                             </Button>
                         </a>
                     </motion.div>

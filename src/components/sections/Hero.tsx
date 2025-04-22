@@ -68,7 +68,7 @@ export default function Hero() {
                         transition={{ duration: 0.8 }}
                         className="text-4xl md:text-6xl font-bold text-blue-600 mb-4"
                     >
-                        Start booking more patients today
+                        AI Receptionist for Dental Practices in India
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -138,69 +138,6 @@ export default function Hero() {
                         </motion.svg>
                     )}
                 </div>
-
-                {/* Trusted By Section */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.2, duration: 0.8 }}
-                    className="mt-12 text-center"
-                >
-                    <p className="text-black font-bold mb-6">
-                        Trusted by hundreds of dental practices across India
-                    </p>
-                    <div className="flex flex-wrap justify-center items-center gap-8">
-                        {[
-                            {
-                                name: "Sukhadanta",
-                                url: "http://sukhadanta.com/",
-                                id: "sukhadanta",
-                            },
-                            {
-                                name: "Ora Care",
-                                url: "https://oracaredental.in/",
-                                id: "oracare",
-                            },
-                            {
-                                name: "Dental Care",
-                                url: "https://www.dentalcare.com/",
-                                id: "dentalcare",
-                            },
-                            {
-                                name: "Smile Studio",
-                                url: "https://www.smilestudio.com/",
-                                id: "smilestudio",
-                            },
-                            {
-                                name: "Perfect Dental",
-                                url: "https://perfectdental.com/",
-                                id: "perfectdental",
-                            },
-                        ].map((practice, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 0.7 }}
-                                whileHover={{ opacity: 1, scale: 1.05 }}
-                                transition={{
-                                    delay: 1.5 + index * 0.1,
-                                    duration: 0.3,
-                                }}
-                                className="px-6"
-                            >
-                                <a
-                                    href={practice.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={`Visit ${practice.name} website - KraftODent customer`}
-                                    className="text-blue-700 font-semibold transition-colors duration-300 hover:scale-125"
-                                >
-                                    {practice.name}
-                                </a>
-                            </motion.div>
-                        ))}
-                    </div>
-                </motion.div>
             </div>
         </motion.section>
     );
