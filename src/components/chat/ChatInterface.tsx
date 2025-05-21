@@ -14,7 +14,7 @@ import ChatBubble from "./ChatBubble";
 
 // Define the webhook URL
 const N8N_WEBHOOK_URL =
-    "https://leotekg.app.n8n.cloud/webhook-test/f298d6c0-d7c8-4ee4-9703-278436367d82";
+    "https://leotekg.app.n8n.cloud/webhook/f298d6c0-d7c8-4ee4-9703-278436367d82";
 
 // Define message type
 interface ChatMessage {
