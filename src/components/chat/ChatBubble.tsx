@@ -7,6 +7,7 @@ interface ChatMessage {
     content: string;
     sender: "user" | "bot";
     timestamp: number;
+    isBookingConfirmation?: boolean;
 }
 
 interface ChatBubbleProps {
@@ -41,6 +42,12 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
         processedContent = processedContent.replace(
             /\_(.*?)\_/g,
             "<em>$1</em>"
+        );
+
+        // Format bullet points
+        processedContent = processedContent.replace(
+            /^• (.+)$/gm,
+            '<div class="flex items-start my-1"><span class="mr-1">•</span><span>$1</span></div>'
         );
 
         return processedContent;

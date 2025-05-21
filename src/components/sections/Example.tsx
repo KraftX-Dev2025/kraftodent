@@ -1,14 +1,72 @@
 // src/components/sections/Example.tsx
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Play } from "lucide-react";
+import {
+    MessageSquare,
+    Play,
+    X,
+    Volume2,
+    PauseCircle,
+    Maximize2,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function Example() {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
+    const [progressPercent, setProgressPercent] = useState(0);
+
+    // Function to toggle play state
+    const togglePlay = () => {
+        setIsPlaying(!isPlaying);
+        if (!isPlaying) {
+            // Simulate video progress
+            const interval = setInterval(() => {
+                setProgressPercent((prev) => {
+                    if (prev >= 100) {
+                        clearInterval(interval);
+                        setIsPlaying(false);
+                        return 0;
+                    }
+                    return prev + 1;
+                });
+            }, 300);
+        }
+    };
+
     return (
-        <section id="example" className="py-16 md:py-20 bg-white relative">
-            <div className="container mx-auto px-4 sm:px-6">
+        <section
+            id="example"
+            className="py-16 md:py-24 bg-white relative overflow-hidden"
+        >
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-5 pointer-events-none">
+                <svg
+                    width="100%"
+                    height="100%"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <defs>
+                        <pattern
+                            id="smallGrid"
+                            width="20"
+                            height="20"
+                            patternUnits="userSpaceOnUse"
+                        >
+                            <path
+                                d="M 20 0 L 0 0 0 20"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="0.5"
+                            />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#smallGrid)" />
+                </svg>
+            </div>
+
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -16,12 +74,25 @@ export default function Example() {
                     viewport={{ once: true }}
                     className="text-center max-w-3xl mx-auto mb-12"
                 >
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3 md:mb-4">
-                        Try Kraftodent, the AI Dental Receptionist
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5 }}
+                        viewport={{ once: true }}
+                        className="inline-block mb-4"
+                    >
+                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">
+                            <Play size={14} className="mr-1" /> Video
+                            Demonstration
+                        </span>
+                    </motion.div>
+
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3 md:mb-4">
+                        See Kraftodent in Action
                     </h2>
-                    <p className="text-sm md:text-base text-gray-600">
-                        Experience our AI dental receptionist in action with an
-                        interactive demo or watch the video below.
+                    <p className="text-lg text-gray-600">
+                        Watch how our AI receptionist handles real patient
+                        conversations and schedules appointments
                     </p>
                 </motion.div>
 
@@ -30,136 +101,174 @@ export default function Example() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
                     viewport={{ once: true }}
-                    className="bg-black rounded-xl overflow-hidden shadow-xl max-w-4xl mx-auto relative"
+                    className="bg-gray-900 rounded-xl overflow-hidden shadow-2xl max-w-4xl mx-auto relative"
                 >
-                    <div className="flex justify-between items-center p-4 border-b border-gray-800"></div>
+                    {/* Video Player UI */}
+                    <div className="relative">
+                        {/* Top Video Controls */}
+                        <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-20 bg-gradient-to-b from-black/60 to-transparent">
+                            <div className="text-white text-lg font-medium">
+                                Kraftodent AI Receptionist Demo
+                            </div>
+                            <button
+                                onClick={() => {}}
+                                className="text-white/80 hover:text-white"
+                                aria-label="Close video"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
 
-                    <div className="relative pb-[56.25%] h-0 overflow-hidden">
-                        {/* This is a placeholder for the video. You would replace this with your actual video player */}
-                        <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-gray-900">
-                            <div className="w-full h-32 mb-8">
-                                <svg
-                                    className="w-full h-full"
-                                    viewBox="0 0 1200 100"
-                                >
+                        {/* Video Container */}
+                        <div className="relative pb-[56.25%] h-0 overflow-hidden">
+                            {/* Video Placeholder */}
+                            <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
+                                {/* Audio Wave Animation */}
+                                <div className="w-full h-28 mb-8 flex items-center justify-center">
                                     {Array.from({ length: 40 }).map((_, i) => (
-                                        <motion.rect
+                                        <motion.div
                                             key={i}
-                                            x={i * 30}
-                                            y={50}
-                                            width={10}
-                                            height={10}
-                                            fill="#6366f1"
+                                            className="h-8 w-1.5 mx-[1px] bg-blue-500"
                                             animate={{
-                                                height: [
-                                                    10,
-                                                    Math.random() * 50 + 20,
-                                                    10,
-                                                ],
-                                                y: [
-                                                    50,
-                                                    50 -
-                                                        (Math.random() * 25 +
-                                                            10),
-                                                    50,
-                                                ],
+                                                height: isPlaying
+                                                    ? [
+                                                          Math.random() * 20 +
+                                                              10,
+                                                          Math.random() * 70 +
+                                                              30,
+                                                          Math.random() * 20 +
+                                                              10,
+                                                      ]
+                                                    : 8,
                                             }}
                                             transition={{
-                                                duration: 1.5,
-                                                repeat: Infinity,
-                                                delay: i * 0.05,
-                                                repeatType: "reverse",
+                                                duration: isPlaying ? 1 : 0.5,
+                                                repeat: isPlaying
+                                                    ? Infinity
+                                                    : 0,
+                                                delay: i * 0.02,
+                                                ease: "easeInOut",
                                             }}
-                                            rx={2}
+                                            style={{
+                                                opacity: isPlaying
+                                                    ? 0.7 + Math.random() * 0.3
+                                                    : 0.4,
+                                                borderRadius: "2px",
+                                            }}
                                         />
                                     ))}
-                                </svg>
-                            </div>
-                            <p className="text-white text-xl text-center">
-                                My name is Kraftodent, an advanced AI reception
-                                assistant.
-                            </p>
+                                </div>
 
-                            {/* Video controls */}
-                            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
-                                <div className="flex items-center">
-                                    <button
-                                        aria-label="Play video"
-                                        className="w-8 h-8 bg-white rounded-full flex items-center justify-center mr-4"
+                                {/* Caption Text */}
+                                <div className="text-white text-center px-4">
+                                    <motion.p
+                                        initial={{ opacity: 0 }}
+                                        animate={{
+                                            opacity: isPlaying ? 1 : 0.7,
+                                        }}
+                                        className="text-xl md:text-2xl mb-4"
                                     >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            viewBox="0 0 24 24"
-                                            fill="currentColor"
+                                        {isPlaying
+                                            ? "AI: How can I help you schedule your appointment today?"
+                                            : "Click play to see the AI receptionist in action"}
+                                    </motion.p>
+
+                                    {isPlaying && (
+                                        <motion.p
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 1.5 }}
+                                            className="text-white/70 text-lg"
                                         >
-                                            <polygon points="5 3 19 12 5 21 5 3" />
-                                        </svg>
+                                            Patient: I need to book a dental
+                                            cleaning next week.
+                                        </motion.p>
+                                    )}
+                                </div>
+
+                                {/* Large play button (shows when paused) */}
+                                {!isPlaying && (
+                                    <motion.button
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={togglePlay}
+                                        className="absolute inset-0 w-full h-full flex items-center justify-center"
+                                        aria-label="Play video"
+                                    >
+                                        <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-white">
+                                            <Play size={32} className="ml-2" />
+                                        </div>
+                                    </motion.button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Bottom Video Controls */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent z-20">
+                            <div className="flex items-center mb-2">
+                                {/* Progress bar */}
+                                <div className="relative flex-1 h-1.5 bg-gray-700 rounded-full mx-2">
+                                    <motion.div
+                                        className="absolute h-full bg-blue-600 rounded-full"
+                                        initial={{ width: "0%" }}
+                                        animate={{
+                                            width: `${progressPercent}%`,
+                                        }}
+                                        transition={{ duration: 0.3 }}
+                                    />
+                                </div>
+                                <div className="text-white text-xs ml-2 min-w-[40px]">
+                                    {isPlaying ? "01:43" : "03:24"}
+                                </div>
+                            </div>
+
+                            <div className="flex justify-between items-center">
+                                <div className="flex space-x-4">
+                                    {/* Play/Pause button */}
+                                    <button
+                                        onClick={togglePlay}
+                                        className="text-white hover:text-blue-400 transition"
+                                        aria-label={
+                                            isPlaying ? "Pause" : "Play"
+                                        }
+                                    >
+                                        {isPlaying ? (
+                                            <PauseCircle size={22} />
+                                        ) : (
+                                            <Play size={22} />
+                                        )}
                                     </button>
-                                    <div className="relative flex-1 h-1 bg-gray-600 rounded-full">
-                                        <div className="absolute h-full w-[30%] bg-white rounded-full"></div>
-                                    </div>
-                                    <div className="text-white text-xs ml-4">
-                                        01:43
-                                    </div>
-                                    <div className="flex space-x-3 ml-4">
-                                        <button aria-label="Mute">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="white"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            >
-                                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                                                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                                            </svg>
-                                        </button>
-                                        <button aria-label="Settings">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="white"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            >
-                                                <circle cx="12" cy="12" r="3" />
-                                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                                            </svg>
-                                        </button>
-                                        <button aria-label="Fullscreen">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="white"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            >
-                                                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-                                            </svg>
-                                        </button>
-                                    </div>
+
+                                    {/* Volume button */}
+                                    <button
+                                        onClick={() => setIsMuted(!isMuted)}
+                                        className="text-white hover:text-blue-400 transition"
+                                        aria-label={isMuted ? "Unmute" : "Mute"}
+                                    >
+                                        <Volume2
+                                            size={22}
+                                            className={
+                                                isMuted ? "opacity-50" : ""
+                                            }
+                                        />
+                                    </button>
+                                </div>
+
+                                <div className="flex space-x-4">
+                                    {/* Full screen button */}
+                                    <button
+                                        className="text-white hover:text-blue-400 transition"
+                                        aria-label="Full screen"
+                                    >
+                                        <Maximize2 size={20} />
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </motion.div>
 
-                <div className="text-center mt-10 space-y-6">
+                <div className="text-center mt-12 space-y-6">
                     <p className="text-gray-600 text-lg">
                         Want to interact directly with our AI receptionist?
                     </p>
@@ -181,14 +290,15 @@ export default function Example() {
                             </Button>
                         </Link>
 
-                        <Button
-                            size="lg"
-                            variant="outline"
-                            className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 flex items-center gap-2"
-                        >
-                            <Play size={20} className="text-blue-600" />
-                            Watch Full Demo
-                        </Button>
+                        <a href="#features">
+                            <Button
+                                size="lg"
+                                variant="outline"
+                                className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-6 rounded-lg text-lg font-semibold transition duration-300"
+                            >
+                                Explore Features
+                            </Button>
+                        </a>
                     </motion.div>
 
                     <motion.div

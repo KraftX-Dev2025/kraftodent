@@ -7,6 +7,8 @@ import {
     Clock,
     MessageSquare,
     Sparkles,
+    Calendar,
+    CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +24,7 @@ interface ChatMessage {
     content: string;
     sender: "user" | "bot";
     timestamp: number;
+    isBookingConfirmation?: boolean;
 }
 
 // Suggested prompts for users to try
@@ -31,11 +34,14 @@ const SUGGESTED_PROMPTS = [
     "How much can I save with your service?",
     "Do you support multiple languages?",
     "How long does setup take?",
+    "I want to book an appointment",
+    "What procedures do you support?",
+    "Tell me about your pricing plans",
 ];
 
 // Welcome message from the chatbot
 const WELCOME_MESSAGE = `
-Hello! I'm Kraftodent's AI dental receptionist demo. I can help answer your questions about our service.
+Hello! I'm Kraftodent's AI dental receptionist demo. I can help answer your questions about our service or assist with scheduling an appointment.
 
 I can help you understand:
 • How our AI receptionist works
@@ -44,8 +50,42 @@ I can help you understand:
 • Cost savings and ROI
 • Setup and implementation process
 
-What would you like to know about Kraftodent?
+What would you like to know about Kraftodent today?
 `;
+
+// Mock appointment booking flow
+const mockScheduleAppointment = async (date?: string, time?: string) => {
+    return new Promise<string>((resolve) => {
+        setTimeout(() => {
+            if (!date && !time) {
+                resolve(`
+I'd be happy to help you schedule an appointment. We have the following slots available:
+
+- Tomorrow (May 22) at 10:00 AM
+- Tomorrow (May 22) at 2:30 PM
+- Thursday (May 23) at 11:15 AM
+- Friday (May 24) at 9:30 AM
+
+Which date and time works best for you?`);
+            } else {
+                resolve(`
+Great! I've scheduled your appointment for ${date || "tomorrow"} at ${
+                    time || "10:00 AM"
+                }.
+
+Here's your confirmation details:
+• Date: ${date || "May 22, 2025"}
+• Time: ${time || "10:00 AM"}
+• Clinic: Kraftodent Dental Clinic
+• Address: 123 Dental Street, Pune
+
+Please arrive 10 minutes before your appointment. You'll receive a reminder notification 24 hours before your appointment.
+
+Is there anything else you need help with today?`);
+            }
+        }, 1500);
+    });
+};
 
 // Helper functions for localStorage
 function saveToLocalStorage(key: string, value: any): boolean {
@@ -76,6 +116,8 @@ export default function ChatInterface() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputMessage, setInputMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [isBookingFlow, setIsBookingFlow] = useState(false);
+    const [bookingStage, setBookingStage] = useState(0);
     const messageEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const messageContainerRef = useRef<HTMLDivElement>(null);
@@ -110,6 +152,69 @@ export default function ChatInterface() {
         }
     }, [messages]);
 
+    const handleBookingFlow = async (message: string) => {
+        // Initial booking request
+        if (
+            message.toLowerCase().includes("appointment") ||
+            message.toLowerCase().includes("schedule") ||
+            message.toLowerCase().includes("book")
+        ) {
+            setIsBookingFlow(true);
+            setBookingStage(1);
+            const response = await mockScheduleAppointment();
+            return response;
+        }
+
+        // If in booking flow, process next steps
+        if (isBookingFlow) {
+            if (bookingStage === 1) {
+                // User selected a time
+                if (
+                    message.toLowerCase().includes("tomorrow") ||
+                    message.toLowerCase().includes("thursday") ||
+                    message.toLowerCase().includes("friday") ||
+                    message.toLowerCase().includes("next")
+                ) {
+                    setBookingStage(2);
+
+                    // Extract date and time information from the message
+                    let date = "tomorrow";
+                    let time = "10:00 AM";
+
+                    if (message.toLowerCase().includes("thursday")) {
+                        date = "Thursday, May 23";
+                    } else if (message.toLowerCase().includes("friday")) {
+                        date = "Friday, May 24";
+                    }
+
+                    if (message.toLowerCase().includes("2:30")) {
+                        time = "2:30 PM";
+                    } else if (message.toLowerCase().includes("11:15")) {
+                        time = "11:15 AM";
+                    } else if (message.toLowerCase().includes("9:30")) {
+                        time = "9:30 AM";
+                    }
+
+                    const confirmation = await mockScheduleAppointment(
+                        date,
+                        time
+                    );
+
+                    // Reset booking flow after confirmation
+                    setTimeout(() => {
+                        setIsBookingFlow(false);
+                        setBookingStage(0);
+                    }, 2000);
+
+                    return confirmation;
+                }
+            }
+        }
+
+        // Default to sending to webhook if not part of booking flow
+        return null;
+    };
+
     const sendMessage = async (content: string) => {
         if (!content.trim()) return;
 
@@ -133,35 +238,46 @@ export default function ChatInterface() {
         setIsLoading(true);
 
         try {
-            // Send request to n8n webhook
-            const response = await fetch(N8N_WEBHOOK_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    message: content,
-                    userId: "demo-user",
-                    timestamp: Date.now(),
-                }),
-            });
+            // Check if this is part of the booking flow
+            const bookingResponse = await handleBookingFlow(content);
 
-            // Get response from n8n webhook
-            let data;
-            try {
-                data = await response.text();
-            } catch (error) {
-                console.error("Error parsing response:", error);
-                data =
-                    "I'm sorry, I couldn't process your request. Please try again.";
+            let responseContent;
+            let isConfirmation = false;
+
+            if (bookingResponse) {
+                responseContent = bookingResponse;
+                // Check if this is a booking confirmation
+                if (bookingResponse.includes("scheduled your appointment")) {
+                    isConfirmation = true;
+                }
+            } else {
+                // If not part of booking flow, send to webhook
+                try {
+                    const response = await fetch(N8N_WEBHOOK_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            message: content,
+                            userId: "demo-user",
+                            timestamp: Date.now(),
+                        }),
+                    });
+
+                    responseContent = await response.text();
+                } catch (error) {
+                    console.error("Error sending to webhook:", error);
+                    responseContent =
+                        "I'm sorry, I couldn't process your request. Please try again.";
+                }
             }
 
             // Create bot response message
             const botMessage: ChatMessage = {
                 id: `bot-${Date.now()}`,
-                content:
-                    data ||
-                    "I'm sorry, I couldn't process your request. Please try again.",
+                content: responseContent,
                 sender: "bot",
                 timestamp: Date.now(),
+                isBookingConfirmation: isConfirmation,
             };
 
             // Add bot message to chat
@@ -201,6 +317,10 @@ export default function ChatInterface() {
 
         setMessages(newMessages);
         saveToLocalStorage("kraftodentChatMessages", newMessages);
+
+        // Reset booking flow state
+        setIsBookingFlow(false);
+        setBookingStage(0);
     };
 
     return (
@@ -244,6 +364,46 @@ export default function ChatInterface() {
                             transition={{ duration: 0.3 }}
                         >
                             <ChatBubble message={message} />
+
+                            {/* Show confirmation UI for booking confirmations */}
+                            {message.isBookingConfirmation && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.3, delay: 0.3 }}
+                                    className="mt-4 bg-green-50 p-4 rounded-lg border border-green-200"
+                                >
+                                    <div className="flex items-center space-x-3 mb-2">
+                                        <div className="p-2 bg-green-100 rounded-full text-green-600">
+                                            <CheckCircle size={16} />
+                                        </div>
+                                        <h4 className="font-medium text-green-800">
+                                            Appointment Confirmed!
+                                        </h4>
+                                    </div>
+
+                                    <div className="flex justify-between items-center">
+                                        <div className="text-sm text-green-700">
+                                            You'll receive a reminder before
+                                            your appointment
+                                        </div>
+
+                                        <div className="flex space-x-2">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="text-xs border-green-300 text-green-700 hover:bg-green-100"
+                                            >
+                                                <Calendar
+                                                    size={14}
+                                                    className="mr-1"
+                                                />
+                                                Add to Calendar
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
                         </motion.div>
                     ))}
                 </AnimatePresence>
@@ -281,7 +441,7 @@ export default function ChatInterface() {
                         Suggested questions
                     </h4>
                     <div className="flex flex-wrap gap-2">
-                        {SUGGESTED_PROMPTS.slice(0, 3).map((prompt, index) => (
+                        {SUGGESTED_PROMPTS.slice(0, 4).map((prompt, index) => (
                             <Button
                                 key={index}
                                 variant="outline"
@@ -315,9 +475,7 @@ export default function ChatInterface() {
                     <Input
                         ref={inputRef}
                         value={inputMessage}
-                        onChange={(e: {
-                            target: { value: React.SetStateAction<string> };
-                        }) => setInputMessage(e.target.value)}
+                        onChange={(e) => setInputMessage(e.target.value)}
                         placeholder="Type your question..."
                         className="bg-white border-gray-200"
                         disabled={isLoading}

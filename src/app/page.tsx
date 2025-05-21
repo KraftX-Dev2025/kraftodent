@@ -12,7 +12,10 @@ import Benefits from "@/components/sections/Benefits";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import Example from "@/components/sections/Example";
+import Pricing from "@/components/sections/Pricing";
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import FAQ from "@/components/sections/FAQ";
+import CTABanner from "@/components/sections/CTABanner";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 // Dynamically import the Hero component with client-side only
@@ -101,8 +104,11 @@ export default function Home() {
                 <Features />
                 <Product />
                 <MissedCalls />
-                <CaseStudies />
                 <Benefits />
+                <CaseStudies />
+                <Pricing />
+                <CTABanner />
+                <FAQ />
                 <Contact />
                 <Footer />
                 <ScrollToTop />
