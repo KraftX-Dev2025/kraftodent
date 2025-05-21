@@ -896,46 +896,6 @@ export default function Contact() {
                                 ))}
                             </ul>
                         </div>
-
-                        {/* Testimonials */}
-                        <div className="bg-gradient-to-br from-indigo-100 to-blue-100 p-6 rounded-xl shadow-md">
-                            <h3 className="text-xl font-bold text-gray-800 mb-4">
-                                What Dentists Are Saying
-                            </h3>
-
-                            <div className="space-y-6">
-                                {testimonials.map((testimonial, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        transition={{
-                                            delay: index * 0.2,
-                                            duration: 0.5,
-                                        }}
-                                        viewport={{ once: true }}
-                                        className="bg-white p-4 rounded-lg shadow-sm"
-                                    >
-                                        <p className="text-gray-600 text-sm italic mb-3">
-                                            "{testimonial.quote}"
-                                        </p>
-                                        <div className="flex items-center">
-                                            <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-2">
-                                                <User size={16} />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-800">
-                                                    {testimonial.author}
-                                                </p>
-                                                <p className="text-xs text-gray-500">
-                                                    {testimonial.practice}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </div>
                     </motion.div>
                 </div>
             </div>

@@ -269,38 +269,6 @@ export default function Example() {
                 </motion.div>
 
                 <div className="text-center mt-12 space-y-6">
-                    <p className="text-gray-600 text-lg">
-                        Want to interact directly with our AI receptionist?
-                    </p>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                        viewport={{ once: true }}
-                        className="flex flex-col sm:flex-row items-center justify-center gap-4"
-                    >
-                        <Link href="/demo">
-                            <Button
-                                size="lg"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 flex items-center gap-2"
-                            >
-                                <MessageSquare size={20} />
-                                Try Interactive Demo
-                            </Button>
-                        </Link>
-
-                        <a href="#features">
-                            <Button
-                                size="lg"
-                                variant="outline"
-                                className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-6 rounded-lg text-lg font-semibold transition duration-300"
-                            >
-                                Explore Features
-                            </Button>
-                        </a>
-                    </motion.div>
-
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}

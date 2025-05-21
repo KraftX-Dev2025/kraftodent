@@ -115,41 +115,6 @@ export default function CaseStudies() {
                         />
                     ))}
                 </div>
-
-                {/* Testimonial Highlight - Simplified for performance */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    viewport={{ once: true }}
-                    className="mt-12 md:mt-16 text-center"
-                >
-                    <div className="bg-white p-6 md:p-8 rounded-xl shadow-md max-w-3xl mx-auto relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400"></div>
-
-                        <motion.div
-                            animate={{
-                                scale: [1, 1.01, 1],
-                            }}
-                            transition={{
-                                duration: 3,
-                                repeat: Infinity,
-                                repeatType: "reverse",
-                            }}
-                        >
-                            <p className="text-xl md:text-2xl italic text-gray-700 mb-4 md:mb-6">
-                                "Kraftodent has completely revolutionized how
-                                our practice operates. We've reduced overhead
-                                and improved patient satisfaction
-                                simultaneously."
-                            </p>
-                            <p className="font-semibold text-blue-600">
-                                — Dr. Priya Sharma, Dental Care Excellence,
-                                Mumbai
-                            </p>
-                        </motion.div>
-                    </div>
-                </motion.div>
             </div>
         </section>
     );

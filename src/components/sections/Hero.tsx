@@ -190,7 +190,7 @@ export default function Hero() {
                                     size="lg"
                                     className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 w-full sm:w-auto"
                                 >
-                                    Book a Demo
+                                    Book a free Demo
                                 </Button>
                             </a>
 

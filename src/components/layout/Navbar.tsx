@@ -22,13 +22,13 @@ const navLinks = [
         hasChildren: false,
     },
     {
-        title: "Success Stories",
-        href: "/#case-studies",
+        title: "Benefits",
+        href: "/#benefits",
         hasChildren: false,
     },
     {
-        title: "Benefits",
-        href: "/#benefits",
+        title: "Success Stories",
+        href: "/#case-studies",
         hasChildren: false,
     },
     {
@@ -37,45 +37,14 @@ const navLinks = [
         highlight: true,
         hasChildren: false,
     },
-    {
-        title: "Pricing",
-        href: "#",
-        hasChildren: true,
-        children: [
-            { title: "Basic Plan", href: "#" },
-            { title: "Professional Plan", href: "#" },
-            { title: "Enterprise", href: "#" },
-            { title: "Custom Solutions", href: "#" },
-        ],
-    },
-    {
-        title: "Resources",
-        href: "#",
-        hasChildren: true,
-        children: [
-            { title: "Documentation", href: "#" },
-            { title: "FAQs", href: "/#faq" },
-            { title: "Blog", href: "#" },
-            { title: "Case Studies", href: "/#case-studies" },
-        ],
-    },
-    {
-        title: "Contact",
-        href: "/#contact",
-        hasChildren: false,
-    },
 ];
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-    const { scrollYProgress } = useScroll();
-    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        setIsMounted(true);
-
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
         };
@@ -179,37 +148,6 @@ export default function Navbar() {
                                             className="ml-1"
                                         />
                                     </motion.div>
-
-                                    {/* Dropdown content */}
-                                    <AnimatePresence>
-                                        {activeDropdown === link.title && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: 10 }}
-                                                transition={{ duration: 0.2 }}
-                                                className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
-                                                onClick={(e) =>
-                                                    e.stopPropagation()
-                                                }
-                                            >
-                                                {link.children?.map((child) => (
-                                                    <Link
-                                                        key={child.title}
-                                                        href={child.href}
-                                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                                                        onClick={() =>
-                                                            setActiveDropdown(
-                                                                null
-                                                            )
-                                                        }
-                                                    >
-                                                        {child.title}
-                                                    </Link>
-                                                ))}
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
                                 </div>
                             ) : (
                                 // Regular link
@@ -312,56 +250,6 @@ export default function Navbar() {
                                                         }`}
                                                     />
                                                 </button>
-
-                                                <AnimatePresence>
-                                                    {activeDropdown ===
-                                                        link.title && (
-                                                        <motion.div
-                                                            initial={{
-                                                                opacity: 0,
-                                                                y: 10,
-                                                            }}
-                                                            animate={{
-                                                                opacity: 1,
-                                                                y: 0,
-                                                            }}
-                                                            exit={{
-                                                                opacity: 0,
-                                                                y: 10,
-                                                            }}
-                                                            transition={{
-                                                                duration: 0.2,
-                                                            }}
-                                                            className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
-                                                            onClick={(e) =>
-                                                                e.stopPropagation()
-                                                            }
-                                                        >
-                                                            {link.children?.map(
-                                                                (child) => (
-                                                                    <Link
-                                                                        key={
-                                                                            child.title
-                                                                        }
-                                                                        href={
-                                                                            child.href
-                                                                        }
-                                                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                                                                        onClick={() =>
-                                                                            setActiveDropdown(
-                                                                                null
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            child.title
-                                                                        }
-                                                                    </Link>
-                                                                )
-                                                            )}
-                                                        </motion.div>
-                                                    )}
-                                                </AnimatePresence>
                                             </div>
                                         ) : (
                                             // Regular mobile link
@@ -406,17 +294,6 @@ export default function Navbar() {
                     )}
                 </AnimatePresence>
             </nav>
-
-            {/* Progress Bar */}
-            {isMounted && (
-                <motion.div
-                    className="h-1 bg-blue-600"
-                    style={{
-                        scaleX: scrollYProgress,
-                        transformOrigin: "0% 50%",
-                    }}
-                />
-            )}
         </header>
     );
 }

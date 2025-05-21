@@ -276,62 +276,6 @@ export default function Features() {
                         </div>
                     </motion.div>
                 </div>
-
-                {/* Feature cards grid */}
-                <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-                >
-                    {features.map((feature, index) => (
-                        <motion.div key={index} variants={itemVariants}>
-                            <FeatureCard
-                                icon={feature.icon}
-                                title={feature.title}
-                                description={feature.description}
-                            />
-                        </motion.div>
-                    ))}
-                </motion.div>
-
-                {/* CTA Banner */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                    viewport={{ once: true }}
-                    className="mt-20 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 md:p-12 text-center text-white"
-                >
-                    <h3 className="text-2xl md:text-3xl font-bold mb-4">
-                        Ready to transform your dental practice?
-                    </h3>
-                    <p className="text-lg text-blue-100 mb-8 max-w-3xl mx-auto">
-                        Join over 100+ dental practices across India that have
-                        already revolutionized their front desk operations with
-                        Kraftodent.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href="/#contact">
-                            <Button
-                                size="lg"
-                                className="bg-white text-blue-600 hover:bg-blue-50 text-lg font-medium"
-                            >
-                                Book a Free Demo
-                            </Button>
-                        </Link>
-                        <Link href="/demo">
-                            <Button
-                                size="lg"
-                                variant="outline"
-                                className="border-white text-white hover:bg-blue-500 text-lg font-medium"
-                            >
-                                Try Interactive Demo
-                            </Button>
-                        </Link>
-                    </div>
-                </motion.div>
             </div>
         </section>
     );
