@@ -1,15 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-    Send,
-    Plus,
-    RefreshCw,
-    Clock,
-    MessageSquare,
-    Sparkles,
-    Calendar,
-    CheckCircle,
-} from "lucide-react";
+import { Send, RefreshCw, HelpCircle, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ChatBubble from "./ChatBubble";
@@ -27,71 +18,42 @@ interface ChatMessage {
     isBookingConfirmation?: boolean;
 }
 
-// Suggested prompts for users to try
-const SUGGESTED_PROMPTS = [
-    "How does the AI receptionist work?",
-    "What features does Kraftodent offer?",
-    "How much can I save with your service?",
-    "Do you support multiple languages?",
-    "How long does setup take?",
-    "I want to book an appointment",
-    "What procedures do you support?",
-    "Tell me about your pricing plans",
-];
-
-// Welcome message from the chatbot
-const WELCOME_MESSAGE = `
-Hello! I'm Kraftodent's AI dental receptionist demo. I can help answer your questions about our service or assist with scheduling an appointment.
-
-I can help you understand:
-• How our AI receptionist works
-• The benefits for your dental practice
-• How we integrate with your existing systems
-• Cost savings and ROI
-• Setup and implementation process
-
-What would you like to know about Kraftodent today?
-`;
+// Simplified welcome message
+const WELCOME_MESSAGE = `Hi! I'm Kraftodent's AI assistant. I can help with scheduling appointments and answering questions about our dental practice services. What can I help you with today?`;
 
 // Mock appointment booking flow
 const mockScheduleAppointment = async (date?: string, time?: string) => {
     return new Promise<string>((resolve) => {
         setTimeout(() => {
             if (!date && !time) {
-                resolve(`
-I'd be happy to help you schedule an appointment. We have the following slots available:
+                resolve(`I can help you schedule an appointment. We have the following slots available:
 
 - Tomorrow (May 22) at 10:00 AM
 - Tomorrow (May 22) at 2:30 PM
 - Thursday (May 23) at 11:15 AM
 - Friday (May 24) at 9:30 AM
 
-Which date and time works best for you?`);
+Which time works best for you?`);
             } else {
-                resolve(`
-Great! I've scheduled your appointment for ${date || "tomorrow"} at ${
-                    time || "10:00 AM"
-                }.
+                resolve(`Great! Your appointment is scheduled for ${
+                    date || "tomorrow"
+                } at ${time || "10:00 AM"}.
 
-Here's your confirmation details:
+Here's your confirmation:
 • Date: ${date || "May 22, 2025"}
 • Time: ${time || "10:00 AM"}
 • Clinic: Kraftodent Dental Clinic
-• Address: 123 Dental Street, Pune
 
-Please arrive 10 minutes before your appointment. You'll receive a reminder notification 24 hours before your appointment.
-
-Is there anything else you need help with today?`);
+You'll receive a reminder 24 hours before your appointment.`);
             }
-        }, 1500);
+        }, 1000);
     });
 };
 
 // Helper functions for localStorage
 function saveToLocalStorage(key: string, value: any): boolean {
     try {
-        const serializedValue = JSON.stringify(value);
-        localStorage.setItem(key, serializedValue);
+        localStorage.setItem(key, JSON.stringify(value));
         return true;
     } catch (error) {
         console.error(`Error saving to localStorage: ${error}`);
@@ -101,11 +63,8 @@ function saveToLocalStorage(key: string, value: any): boolean {
 
 function getFromLocalStorage<T>(key: string, defaultValue: T): T {
     try {
-        const serializedValue = localStorage.getItem(key);
-        if (serializedValue === null) {
-            return defaultValue;
-        }
-        return JSON.parse(serializedValue) as T;
+        const value = localStorage.getItem(key);
+        return value ? JSON.parse(value) : defaultValue;
     } catch (error) {
         console.error(`Error retrieving from localStorage: ${error}`);
         return defaultValue;
@@ -118,6 +77,8 @@ export default function ChatInterface() {
     const [isLoading, setIsLoading] = useState(false);
     const [isBookingFlow, setIsBookingFlow] = useState(false);
     const [bookingStage, setBookingStage] = useState(0);
+    const [showHelp, setShowHelp] = useState(false);
+
     const messageEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const messageContainerRef = useRef<HTMLDivElement>(null);
@@ -146,9 +107,9 @@ export default function ChatInterface() {
 
     // Scroll to bottom when messages change
     useEffect(() => {
-        const container = messageContainerRef.current;
-        if (container) {
-            container.scrollTop = container.scrollHeight;
+        if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop =
+                messageContainerRef.current.scrollHeight;
         }
     }, [messages]);
 
@@ -247,7 +208,7 @@ export default function ChatInterface() {
             if (bookingResponse) {
                 responseContent = bookingResponse;
                 // Check if this is a booking confirmation
-                if (bookingResponse.includes("scheduled your appointment")) {
+                if (bookingResponse.includes("appointment is scheduled")) {
                     isConfirmation = true;
                 }
             } else {
@@ -267,7 +228,7 @@ export default function ChatInterface() {
                 } catch (error) {
                     console.error("Error sending to webhook:", error);
                     responseContent =
-                        "I'm sorry, I couldn't process your request. Please try again.";
+                        "Sorry, I couldn't process your request. Please try again.";
                 }
             }
 
@@ -290,8 +251,7 @@ export default function ChatInterface() {
             // Create error message
             const errorMessage: ChatMessage = {
                 id: `error-${Date.now()}`,
-                content:
-                    "I'm sorry, there was an error connecting to the server. Please try again later.",
+                content: "Sorry, there was an error. Please try again later.",
                 sender: "bot",
                 timestamp: Date.now(),
             };
@@ -323,32 +283,90 @@ export default function ChatInterface() {
         setBookingStage(0);
     };
 
+    const toggleHelp = () => {
+        setShowHelp(!showHelp);
+    };
+
+    // Quick examples for users to try
+    const quickResponses = [
+        {
+            text: "Book appointment",
+            action: () => sendMessage("I'd like to book an appointment"),
+        },
+        {
+            text: "Features",
+            action: () => sendMessage("What features do you offer?"),
+        },
+        {
+            text: "How it works",
+            action: () => sendMessage("How does the AI receptionist work?"),
+        },
+    ];
+
     return (
-        <div className="flex flex-col h-[600px] md:h-[700px] bg-white border border-gray-200 rounded-lg overflow-hidden shadow-lg">
+        <div className="flex flex-col h-[600px] md:h-[700px] bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
             {/* Chat Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-blue-600 text-white">
-                <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                        <Sparkles size={18} className="text-white" />
+            <div className="flex items-center justify-between p-3 bg-blue-600 text-white">
+                <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                        <Sparkles size={16} className="text-white" />
                     </div>
                     <div>
-                        <h3 className="font-medium">Kraftodent AI Assistant</h3>
-                        <p className="text-xs text-blue-100">
-                            Dental AI receptionist
-                        </p>
+                        <h3 className="font-medium">Kraftodent AI</h3>
                     </div>
                 </div>
 
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearChat}
-                    className="flex items-center text-xs text-blue-100 hover:text-white hover:bg-blue-700"
-                >
-                    <RefreshCw size={14} className="mr-1" />
-                    Clear chat
-                </Button>
+                <div className="flex items-center space-x-2">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={toggleHelp}
+                        className="text-white hover:bg-blue-700 h-8 w-8 p-0"
+                        aria-label="Help"
+                    >
+                        <HelpCircle size={16} />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearChat}
+                        className="text-white hover:bg-blue-700 h-8 w-8 p-0"
+                        aria-label="Clear chat"
+                    >
+                        <RefreshCw size={16} />
+                    </Button>
+                </div>
             </div>
+
+            {/* Help Panel */}
+            <AnimatePresence>
+                {showHelp && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="bg-blue-50 border-b border-blue-200 p-3"
+                    >
+                        <h4 className="font-medium text-blue-800 mb-2">
+                            About this demo
+                        </h4>
+                        <p className="text-sm text-blue-700 mb-2">
+                            This is a demo of Kraftodent's AI dental
+                            receptionist. It can:
+                        </p>
+                        <ul className="text-sm text-blue-700 list-disc pl-5 space-y-1 mb-2">
+                            <li>Schedule appointments</li>
+                            <li>Answer questions about our service</li>
+                            <li>Explain how our AI works</li>
+                            <li>Discuss pricing and features</li>
+                        </ul>
+                        <p className="text-sm text-blue-700">
+                            For a full demonstration with your practice's
+                            specific workflows, please book a consultation.
+                        </p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Chat Messages */}
             <div
@@ -364,46 +382,6 @@ export default function ChatInterface() {
                             transition={{ duration: 0.3 }}
                         >
                             <ChatBubble message={message} />
-
-                            {/* Show confirmation UI for booking confirmations */}
-                            {message.isBookingConfirmation && (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.3, delay: 0.3 }}
-                                    className="mt-4 bg-green-50 p-4 rounded-lg border border-green-200"
-                                >
-                                    <div className="flex items-center space-x-3 mb-2">
-                                        <div className="p-2 bg-green-100 rounded-full text-green-600">
-                                            <CheckCircle size={16} />
-                                        </div>
-                                        <h4 className="font-medium text-green-800">
-                                            Appointment Confirmed!
-                                        </h4>
-                                    </div>
-
-                                    <div className="flex justify-between items-center">
-                                        <div className="text-sm text-green-700">
-                                            You'll receive a reminder before
-                                            your appointment
-                                        </div>
-
-                                        <div className="flex space-x-2">
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                className="text-xs border-green-300 text-green-700 hover:bg-green-100"
-                                            >
-                                                <Calendar
-                                                    size={14}
-                                                    className="mr-1"
-                                                />
-                                                Add to Calendar
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
                         </motion.div>
                     ))}
                 </AnimatePresence>
@@ -426,30 +404,26 @@ export default function ChatInterface() {
                                 style={{ animationDelay: "0.4s" }}
                             ></span>
                         </div>
-                        <span>Thinking...</span>
+                        <span>Typing...</span>
                     </motion.div>
                 )}
 
                 <div ref={messageEndRef} />
             </div>
 
-            {/* Suggested Prompts - show only at the beginning */}
-            {messages.length <= 2 && (
-                <div className="px-4 py-3 border-t border-gray-200 bg-white">
-                    <h4 className="text-xs font-medium text-gray-500 mb-2 flex items-center">
-                        <MessageSquare size={12} className="mr-1" />
-                        Suggested questions
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                        {SUGGESTED_PROMPTS.slice(0, 4).map((prompt, index) => (
+            {/* Quick Responses - only show for first interaction */}
+            {messages.length <= 1 && (
+                <div className="px-4 py-2 bg-gray-50 border-t border-gray-200">
+                    <div className="flex flex-wrap gap-2 justify-center">
+                        {quickResponses.map((item, index) => (
                             <Button
                                 key={index}
                                 variant="outline"
                                 size="sm"
                                 className="text-xs py-1 h-auto text-blue-600 border-blue-200 hover:bg-blue-50"
-                                onClick={() => sendMessage(prompt)}
+                                onClick={item.action}
                             >
-                                {prompt}
+                                {item.text}
                             </Button>
                         ))}
                     </div>
@@ -459,24 +433,14 @@ export default function ChatInterface() {
             {/* Chat Input */}
             <form
                 onSubmit={handleSubmit}
-                className="p-4 border-t border-gray-200 bg-white"
+                className="p-3 border-t border-gray-200 bg-white"
             >
                 <div className="flex space-x-2">
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="flex-shrink-0 text-gray-400"
-                        disabled
-                    >
-                        <Plus size={18} />
-                    </Button>
-
                     <Input
                         ref={inputRef}
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
-                        placeholder="Type your question..."
+                        placeholder="Type your message..."
                         className="bg-white border-gray-200"
                         disabled={isLoading}
                     />
@@ -485,18 +449,11 @@ export default function ChatInterface() {
                         type="submit"
                         variant="default"
                         size="icon"
-                        className="flex-shrink-0 bg-blue-600 hover:bg-blue-700"
+                        className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 h-9 w-9"
                         disabled={!inputMessage.trim() || isLoading}
                     >
-                        <Send size={18} />
+                        <Send size={16} />
                     </Button>
-                </div>
-
-                <div className="flex items-center justify-center mt-3">
-                    <Clock size={12} className="text-gray-400 mr-1" />
-                    <span className="text-xs text-gray-400">
-                        This is a demo of our AI receptionist capabilities
-                    </span>
                 </div>
             </form>
         </div>

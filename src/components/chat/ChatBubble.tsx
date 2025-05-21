@@ -16,33 +16,11 @@ interface ChatBubbleProps {
 
 export default function ChatBubble({ message }: ChatBubbleProps) {
     const isUser = message.sender === "user";
-    const formattedTime = new Date(message.timestamp).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-    });
 
     // Process message content to add formatting
     const processContent = (content: string) => {
-        // Replace URLs with clickable links
-        const urlRegex = /(https?:\/\/[^\s]+)/g;
-        let processedContent = content.replace(urlRegex, (url) => {
-            return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">${url}</a>`;
-        });
-
         // Replace newlines with <br>
-        processedContent = processedContent.replace(/\n/g, "<br>");
-
-        // Highlight text between asterisks as bold
-        processedContent = processedContent.replace(
-            /\*\*(.*?)\*\*/g,
-            "<strong>$1</strong>"
-        );
-
-        // Highlight text between underscores as italic
-        processedContent = processedContent.replace(
-            /\_(.*?)\_/g,
-            "<em>$1</em>"
-        );
+        let processedContent = content.replace(/\n/g, "<br>");
 
         // Format bullet points
         processedContent = processedContent.replace(
@@ -72,10 +50,10 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
             <div className="max-w-[85%]">
                 <div
                     className={cn(
-                        "rounded-md",
+                        "rounded-lg",
                         isUser
-                            ? "bg-blue-600 text-white rounded-tr-none px-4 py-3"
-                            : "bg-gray-100 text-gray-800 rounded-tl-none px-4 py-3"
+                            ? "bg-blue-600 text-white rounded-tr-none px-3 py-2"
+                            : "bg-gray-100 text-gray-800 rounded-tl-none px-3 py-2"
                     )}
                 >
                     <div
@@ -84,15 +62,6 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
                             __html: processContent(message.content),
                         }}
                     />
-                </div>
-
-                <div
-                    className={cn(
-                        "text-xs text-gray-400 mt-1",
-                        isUser ? "text-right" : "text-left"
-                    )}
-                >
-                    {formattedTime}
                 </div>
             </div>
 
