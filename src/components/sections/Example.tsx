@@ -1,6 +1,9 @@
 // src/components/sections/Example.tsx
 import React from "react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { MessageSquare, Play } from "lucide-react";
+import Link from "next/link";
 
 export default function Example() {
     return (
@@ -17,8 +20,8 @@ export default function Example() {
                         Try Kraftodent, the AI Dental Receptionist
                     </h2>
                     <p className="text-sm md:text-base text-gray-600">
-                        See our AI dental receptionist in action with a quick
-                        test call or play the video below.
+                        Experience our AI dental receptionist in action with an
+                        interactive demo or watch the video below.
                     </p>
                 </motion.div>
 
@@ -156,11 +159,52 @@ export default function Example() {
                     </div>
                 </motion.div>
 
-                <div className="text-center mt-8">
-                    <p className="text-gray-600">
-                        Want to try it yourself? Contact us to experience our AI
-                        receptionist in action.
+                <div className="text-center mt-10 space-y-6">
+                    <p className="text-gray-600 text-lg">
+                        Want to interact directly with our AI receptionist?
                     </p>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        viewport={{ once: true }}
+                        className="flex flex-col sm:flex-row items-center justify-center gap-4"
+                    >
+                        <Link href="/demo">
+                            <Button
+                                size="lg"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 flex items-center gap-2"
+                            >
+                                <MessageSquare size={20} />
+                                Try Interactive Demo
+                            </Button>
+                        </Link>
+
+                        <Button
+                            size="lg"
+                            variant="outline"
+                            className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 flex items-center gap-2"
+                        >
+                            <Play size={20} className="text-blue-600" />
+                            Watch Full Demo
+                        </Button>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        viewport={{ once: true }}
+                        className="bg-blue-50 p-6 max-w-2xl mx-auto rounded-lg border border-blue-100"
+                    >
+                        <p className="text-blue-800 text-sm">
+                            <strong>Note:</strong> The interactive demo gives
+                            you a taste of our AI capabilities. For a complete
+                            demonstration with your practice's specific
+                            requirements, please book a consultation.
+                        </p>
+                    </motion.div>
                 </div>
             </div>
         </section>

@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Play } from "lucide-react";
+import { Play, MessageSquare } from "lucide-react";
+import Link from "next/link";
 
 export default function Hero() {
     const { scrollYProgress } = useScroll();
@@ -95,21 +96,50 @@ export default function Hero() {
                                 Book a Demo
                             </Button>
                         </a>
-                        <a
-                            href="#example"
-                            aria-label="See Kraftodent AI in action with feature demonstration"
+
+                        <Link
+                            href="/demo"
+                            aria-label="Try Kraftodent AI receptionist in interactive demo"
                         >
                             <Button
                                 size="lg"
                                 variant="outline"
                                 className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-6 rounded-lg text-lg font-semibold transition duration-300 flex items-center gap-2 w-full sm:w-auto"
                             >
-                                <Play size={20} className="text-blue-600" />
-                                See it in Action
+                                <MessageSquare
+                                    size={20}
+                                    className="text-blue-600"
+                                />
+                                Try Interactive Demo
                             </Button>
-                        </a>
+                        </Link>
                     </motion.div>
                 </div>
+
+                {/* Floating stats */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                    className="flex flex-wrap justify-center gap-4 md:gap-8 mt-12"
+                >
+                    {[
+                        { value: "40%", label: "Cost Reduction" },
+                        { value: "24/7", label: "Availability" },
+                        { value: "98%", label: "Patient Satisfaction" },
+                        { value: "100+", label: "Clinics Trust Us" },
+                    ].map((stat, index) => (
+                        <div
+                            key={index}
+                            className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-md flex items-center"
+                        >
+                            <span className="text-xl font-bold text-blue-600 mr-2">
+                                {stat.value}
+                            </span>
+                            <span className="text-gray-600">{stat.label}</span>
+                        </div>
+                    ))}
+                </motion.div>
             </div>
         </motion.section>
     );

@@ -95,7 +95,7 @@ export default function Contact() {
             }
 
             // Generate WhatsApp URL with the message
-            const whatsappUrl = `https://wa.me/CONTACT_NUMBER?text=${generateWhatsAppMessage()}`;
+            const whatsappUrl = `https://wa.me/9822296812?text=${generateWhatsAppMessage()}`;
 
             // Open WhatsApp in a new tab
             window.open(whatsappUrl, "_blank", "noopener,noreferrer");
