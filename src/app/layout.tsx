@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
+import { companyInfo } from "@/lib/constants";
 
 const fontSans = FontSans({
     subsets: ["latin"],
@@ -10,27 +11,11 @@ const fontSans = FontSans({
     display: "swap", // Optimize font loading
 });
 
-// Company information used across metadata
-const companyInfo = {
-    name: "Kraftodent",
-    domain: "kraftodent.com",
-    url: "https://kraftodent.com",
-    logo: "https://kraftodent.com/logo.png",
-    address: {
-        city: "Pune",
-        state: "Maharashtra",
-        country: "India",
-    },
-    contact: {
-        email: "contact@kraftxworks.com",
-        phone: "+91 9822296812",
-    },
-    social: {
-        facebook: "https://facebook.com/kraftodent",
-        twitter: "https://twitter.com/kraftodent",
-        instagram: "https://instagram.com/kraftodent",
-        linkedin: "https://linkedin.com/company/kraftodent",
-    },
+// Separate viewport configuration from metadata
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
 };
 
 export const metadata: Metadata = {
@@ -137,13 +122,8 @@ export const metadata: Metadata = {
         creator: "@kraftodent",
         site: "@kraftodent",
     },
-    viewport: {
-        width: "device-width",
-        initialScale: 1,
-        maximumScale: 5,
-    },
     verification: {
-        google: "google-site-verification-code", // Add your verification code here
+        google: "google-site-verification-code",
     },
     category: "technology",
     applicationName: "Kraftodent",
@@ -159,9 +139,6 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <head>
-                <link rel="canonical" href={companyInfo.url} />
-            </head>
             <body
                 className={cn(
                     "min-h-screen bg-background font-sans antialiased",
@@ -169,8 +146,6 @@ export default function RootLayout({
                 )}
             >
                 {children}
-
-                {/* Structured Data for Local Business */}
                 <Script
                     id="structured-data-local-business"
                     type="application/ld+json"
@@ -200,8 +175,6 @@ export default function RootLayout({
                         }),
                     }}
                 />
-
-                {/* Structured Data for Organization */}
                 <Script
                     id="structured-data-organization"
                     type="application/ld+json"

@@ -7,37 +7,41 @@ import {
     Calendar,
     Clock,
     PhoneCall,
+    Star,
 } from "lucide-react";
 import Link from "next/link";
+import { ctaIcons, ctaPositions } from "@/lib/constants";
 
 export default function CTABanner() {
     return (
         <section className="py-20 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 relative overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {/* Animated circles */}
-                {[...Array(5)].map((_, i) => (
-                    <motion.div
-                        key={i}
-                        className="absolute rounded-full bg-white/10"
-                        style={{
-                            width: `${100 + i * 50}px`,
-                            height: `${100 + i * 50}px`,
-                            top: `${Math.random() * 100}%`,
-                            left: `${Math.random() * 100}%`,
-                        }}
-                        initial={{ scale: 0.8, opacity: 0.1 }}
-                        animate={{
-                            scale: [0.8, 1.2, 0.8],
-                            opacity: [0.1, 0.2, 0.1],
-                        }}
-                        transition={{
-                            duration: 10 + i * 2,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                        }}
-                    />
-                ))}
+                {/* Animated circles with fixed positions instead of random */}
+                {[...Array(5)].map((_, i) => {
+                    return (
+                        <motion.div
+                            key={i}
+                            className="absolute rounded-full bg-white/10"
+                            style={{
+                                width: `${100 + i * 50}px`,
+                                height: `${100 + i * 50}px`,
+                                top: ctaPositions[i].top,
+                                left: ctaPositions[i].left,
+                            }}
+                            initial={{ scale: 0.8, opacity: 0.1 }}
+                            animate={{
+                                scale: [0.8, 1.2, 0.8],
+                                opacity: [0.1, 0.2, 0.1],
+                            }}
+                            transition={{
+                                duration: 10 + i * 2,
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                            }}
+                        />
+                    );
+                })}
 
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-700/50 to-transparent"></div>
@@ -61,20 +65,7 @@ export default function CTABanner() {
                         </p>
 
                         <div className="flex flex-wrap justify-center gap-3 mb-10">
-                            {[
-                                {
-                                    text: "24/7 AI Receptionist",
-                                    icon: <Clock size={16} />,
-                                },
-                                {
-                                    text: "5-Minute Setup",
-                                    icon: <Calendar size={16} />,
-                                },
-                                {
-                                    text: "Multilingual Support",
-                                    icon: <PhoneCall size={16} />,
-                                },
-                            ].map((item, index) => (
+                            {ctaIcons.map((item, index) => (
                                 <motion.div
                                     key={index}
                                     initial={{ opacity: 0, y: 10 }}
@@ -87,7 +78,7 @@ export default function CTABanner() {
                                     className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2"
                                 >
                                     <div className="mr-2 text-blue-300">
-                                        {item.icon}
+                                        <item.icon size={item.size} />
                                     </div>
                                     <span className="text-sm text-white font-medium">
                                         {item.text}
@@ -160,15 +151,11 @@ export default function CTABanner() {
                             <div className="hidden md:flex flex-col items-end space-y-1">
                                 <div className="flex">
                                     {[...Array(5)].map((_, i) => (
-                                        <svg
+                                        <Star
                                             key={i}
-                                            xmlns="http://www.w3.org/2000/svg"
                                             className="h-5 w-5 text-yellow-400"
-                                            viewBox="0 0 20 20"
                                             fill="currentColor"
-                                        >
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
+                                        />
                                     ))}
                                 </div>
                                 <div className="text-sm text-blue-200">

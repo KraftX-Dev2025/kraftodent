@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { allFaqs } from "@/lib/constants";
 
 interface FAQItemProps {
     question: string;
@@ -21,12 +22,6 @@ interface FAQItemProps {
     category: string;
 }
 
-// FAQ data structure
-interface FAQType {
-    question: string;
-    answer: string;
-    category: string;
-}
 
 // Individual FAQ Item component
 function FAQItem({
@@ -43,7 +38,7 @@ function FAQItem({
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
             viewport={{ once: true }}
-            className="border-b border-gray-200 last:border-b-0"
+            className="border-b border-gray-200 last:border-b-0 px-8"
         >
             <button
                 onClick={toggleOpen}
@@ -98,82 +93,23 @@ function FAQItem({
 
 // Main FAQ component
 export default function FAQ() {
-    // All FAQ data
-    const allFaqs: FAQType[] = [
-        {
-            question: "Does Kraftodent integrate with my dental software?",
-            answer: "Yes, we support most major practice management software platforms used in India, including Dentrix, Carestack, and more. Our team will ensure a smooth integration with your existing systems during the setup process, and we're constantly adding support for additional platforms.",
-            category: "Integration",
-        },
-        {
-            question: "Will my patients talk to a robot?",
-            answer: "No — our voice AI is designed to sound human, empathetic, and responsive. Patients often can't tell they're speaking with an AI system. We've specifically trained our voice models to handle Indian accents and multiple regional languages with natural conversational patterns.",
-            category: "Technology",
-        },
-        {
-            question: "Can I customize responses?",
-            answer: "Absolutely. We tailor call flows and language to match your clinic's tone, terminology preferences, and specific procedures. You can customize greeting messages, appointment confirmation details, and follow-up protocols to maintain your practice's unique identity.",
-            category: "Customization",
-        },
-        {
-            question: "How long does it take to set up?",
-            answer: "Most dental practices are up and running with Kraftodent within 2-3 days. Our onboarding team handles the integration with your existing software, trains your staff, and makes sure everything is working perfectly before going live.",
-            category: "Setup",
-        },
-        {
-            question: "What languages does Kraftodent support?",
-            answer: "Kraftodent currently supports English, Hindi, Marathi, Gujarati, Tamil, and Telugu. We're adding more Indian languages regularly based on customer demand.",
-            category: "Features",
-        },
-        {
-            question: "How secure is patient data?",
-            answer: "We take data security extremely seriously. Kraftodent is fully HIPAA-compliant and uses advanced encryption for all patient conversations and data. Your patient information remains private, secure, and is never shared with third parties.",
-            category: "Security",
-        },
-        {
-            question: "Do I need special equipment?",
-            answer: "No, you don't need any special equipment. Kraftodent works with your existing phone systems and internet connection. Our team will guide you through the simple setup process that requires minimal technical knowledge.",
-            category: "Setup",
-        },
-        {
-            question: "What happens if the AI can't answer a question?",
-            answer: "If our AI encounters a question it can't handle confidently, it will seamlessly escalate to your staff based on predefined rules. We also continuously train the system based on these exceptions to improve its capabilities over time.",
-            category: "Technology",
-        },
-        {
-            question: "Can I monitor the AI's performance?",
-            answer: "Yes, you'll have access to a comprehensive dashboard showing call statistics, patient satisfaction metrics, appointment bookings, and more. You can also listen to call recordings to ensure quality and help us improve the system.",
-            category: "Analytics",
-        },
-        {
-            question: "What's the pricing structure?",
-            answer: "We offer flexible plans based on your practice size and needs. Our pricing is transparent with no hidden fees, starting from ₹16,000 per month with our annual plan. Please contact our team for a custom quote tailored to your specific requirements.",
-            category: "Pricing",
-        },
-    ];
-
     // Available categories extracted from FAQs
     const categories = [...new Set(allFaqs.map((faq) => faq.category))];
-
     // State to track which FAQ is open
     const [openIndex, setOpenIndex] = useState<number | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [activeCategory, setActiveCategory] = useState<string>("All");
-
     // Toggle function for opening/closing FAQs
     const toggleFAQ = (index: number) => {
         setOpenIndex(openIndex === index ? null : index);
     };
-
     // Filter FAQs based on search query and category
     const filteredFaqs = allFaqs.filter((faq) => {
         const matchesSearch =
             faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
             faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
-
         const matchesCategory =
             activeCategory === "All" || faq.category === activeCategory;
-
         return matchesSearch && matchesCategory;
     });
 
@@ -191,7 +127,6 @@ export default function FAQ() {
                     }}
                 ></div>
             </div>
-
             <div className="container mx-auto px-4 sm:px-6 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -221,7 +156,6 @@ export default function FAQ() {
                         dental practice
                     </p>
                 </motion.div>
-
                 {/* Search and category filters */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -252,8 +186,7 @@ export default function FAQ() {
                                 </button>
                             )}
                         </div>
-
-                        <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 flex-nowrap">
+                        <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
                             <Button
                                 size="sm"
                                 variant={
@@ -270,7 +203,6 @@ export default function FAQ() {
                             >
                                 All
                             </Button>
-
                             {categories.map((category) => (
                                 <Button
                                     key={category}
@@ -280,7 +212,7 @@ export default function FAQ() {
                                             ? "default"
                                             : "outline"
                                     }
-                                    className={`whitespace-nowrap ${
+                                    className={`whitespace-nowrap mb-2 ${
                                         activeCategory === category
                                             ? "bg-blue-600"
                                             : "border-gray-300"
@@ -293,7 +225,6 @@ export default function FAQ() {
                         </div>
                     </div>
                 </motion.div>
-
                 <div className="max-w-3xl mx-auto">
                     {/* Search results summary */}
                     {searchQuery && (
@@ -307,7 +238,6 @@ export default function FAQ() {
                             {searchQuery}"
                         </motion.div>
                     )}
-
                     {/* FAQ accordion */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -354,7 +284,6 @@ export default function FAQ() {
                         )}
                     </motion.div>
                 </div>
-
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { pricingPlans } from "@/lib/constants";
 
 export default function Pricing() {
     const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
@@ -23,142 +24,6 @@ export default function Pricing() {
     const toggleBillingPeriod = () => {
         setBillingPeriod(billingPeriod === "monthly" ? "yearly" : "monthly");
     };
-
-    const plans = [
-        {
-            name: "Basic",
-            icon: <Users className="h-6 w-6" />,
-            description:
-                "Perfect for smaller dental practices with up to 3 dentists",
-            monthlyPrice: "₹20,000",
-            yearlyPrice: "₹16,000",
-            yearlyTotal: "₹192,000",
-            features: [
-                {
-                    included: true,
-                    text: "AI Receptionist with 24/7 availability",
-                },
-                {
-                    included: true,
-                    text: "Appointment scheduling & reminders",
-                },
-                {
-                    included: true,
-                    text: "WhatsApp integration",
-                },
-                {
-                    included: true,
-                    text: "2 language support",
-                    tooltip:
-                        "English and Hindi included. Additional languages available as add-ons.",
-                },
-                {
-                    included: false,
-                    text: "Multi-location support",
-                },
-                {
-                    included: false,
-                    text: "Advanced Analytics Dashboard",
-                },
-                {
-                    included: false,
-                    text: "Custom Integration",
-                },
-            ],
-            popular: false,
-            callToAction: "Get Started",
-            callToActionLink: "#contact",
-        },
-        {
-            name: "Professional",
-            icon: <Building className="h-6 w-6" />,
-            description:
-                "Ideal for growing practices with 4-10 dentists and multiple staff members",
-            monthlyPrice: "₹35,000",
-            yearlyPrice: "₹28,000",
-            yearlyTotal: "₹336,000",
-            features: [
-                {
-                    included: true,
-                    text: "AI Receptionist with 24/7 availability",
-                },
-                {
-                    included: true,
-                    text: "Appointment scheduling & reminders",
-                },
-                {
-                    included: true,
-                    text: "WhatsApp & SMS integration",
-                },
-                {
-                    included: true,
-                    text: "5 language support",
-                    tooltip:
-                        "English, Hindi, Marathi, Tamil, and Telugu included",
-                },
-                {
-                    included: true,
-                    text: "Multi-location support",
-                    tooltip: "Up to 3 locations",
-                },
-                {
-                    included: true,
-                    text: "Advanced Analytics Dashboard",
-                },
-                {
-                    included: false,
-                    text: "Custom Integration",
-                },
-            ],
-            popular: true,
-            callToAction: "Get Started",
-            callToActionLink: "#contact",
-        },
-        {
-            name: "Enterprise",
-            icon: <BadgeCheck className="h-6 w-6" />,
-            description:
-                "For large dental chains with 10+ dentists and complex requirements",
-            monthlyPrice: "Contact Us",
-            yearlyPrice: "Contact Us",
-            yearlyTotal: "",
-            features: [
-                {
-                    included: true,
-                    text: "AI Receptionist with 24/7 availability",
-                },
-                {
-                    included: true,
-                    text: "Appointment scheduling & reminders",
-                },
-                {
-                    included: true,
-                    text: "All communication channels",
-                },
-                {
-                    included: true,
-                    text: "All available languages",
-                },
-                {
-                    included: true,
-                    text: "Unlimited locations",
-                },
-                {
-                    included: true,
-                    text: "Advanced Analytics Dashboard",
-                },
-                {
-                    included: true,
-                    text: "Custom Integration",
-                    tooltip:
-                        "We'll integrate with your existing practice management software",
-                },
-            ],
-            popular: false,
-            callToAction: "Contact Sales",
-            callToActionLink: "#contact",
-        },
-    ];
 
     return (
         <section
@@ -266,7 +131,7 @@ export default function Pricing() {
 
                 {/* Pricing cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {plans.map((plan, index) => (
+                    {pricingPlans.map((plan, index) => (
                         <motion.div
                             key={plan.name}
                             initial={{ opacity: 0, y: 30 }}
@@ -280,7 +145,7 @@ export default function Pricing() {
                             }`}
                         >
                             {plan.popular && (
-                                <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full transform rotate-12">
+                                <div className="absolute top-5 right-3 -mt-2 -mr-2 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full transform rotate-12">
                                     Most Popular
                                 </div>
                             )}
@@ -294,7 +159,7 @@ export default function Pricing() {
                                                 : "bg-gray-100 text-gray-700"
                                         }`}
                                     >
-                                        {plan.icon}
+                                         <plan.icon size={plan.size} />
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-800 ml-3">
                                         {plan.name}
@@ -305,7 +170,7 @@ export default function Pricing() {
                                     {plan.description}
                                 </p>
 
-                                <div className="mb-4">
+                                {/* <div className="mb-4">
                                     {plan.yearlyTotal ? (
                                         <div>
                                             <div className="text-4xl font-bold text-gray-800">
@@ -328,7 +193,7 @@ export default function Pricing() {
                                             {plan.monthlyPrice}
                                         </div>
                                     )}
-                                </div>
+                                </div> */}
 
                                 <Link href={plan.callToActionLink}>
                                     <Button
