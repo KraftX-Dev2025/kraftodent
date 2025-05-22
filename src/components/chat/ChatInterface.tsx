@@ -7,7 +7,7 @@ import ChatBubble from "./ChatBubble";
 
 // Define the webhook URL
 const N8N_WEBHOOK_URL =
-    "https://leotekg.app.n8n.cloud/webhook/f298d6c0-d7c8-4ee4-9703-278436367d82";
+    "https://leotekg.app.n8n.cloud/webhook-test/f298d6c0-d7c8-4ee4-9703-278436367d82";
 
 // Define message type
 interface ChatMessage {
@@ -17,38 +17,6 @@ interface ChatMessage {
     timestamp: number;
     isBookingConfirmation?: boolean;
 }
-
-// Simplified welcome message
-const WELCOME_MESSAGE = `Hi! I'm Kraftodent's AI assistant. I can help with scheduling appointments and answering questions about our dental practice services. What can I help you with today?`;
-
-// Mock appointment booking flow
-const mockScheduleAppointment = async (date?: string, time?: string) => {
-    return new Promise<string>((resolve) => {
-        setTimeout(() => {
-            if (!date && !time) {
-                resolve(`I can help you schedule an appointment. We have the following slots available:
-
-- Tomorrow (May 22) at 10:00 AM
-- Tomorrow (May 22) at 2:30 PM
-- Thursday (May 23) at 11:15 AM
-- Friday (May 24) at 9:30 AM
-
-Which time works best for you?`);
-            } else {
-                resolve(`Great! Your appointment is scheduled for ${
-                    date || "tomorrow"
-                } at ${time || "10:00 AM"}.
-
-Here's your confirmation:
-• Date: ${date || "May 22, 2025"}
-• Time: ${time || "10:00 AM"}
-• Clinic: Kraftodent Dental Clinic
-
-You'll receive a reminder 24 hours before your appointment.`);
-            }
-        }, 1000);
-    });
-};
 
 // Helper functions for localStorage
 function saveToLocalStorage(key: string, value: any): boolean {
@@ -75,23 +43,28 @@ export default function ChatInterface() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputMessage, setInputMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [isBookingFlow, setIsBookingFlow] = useState(false);
-    const [bookingStage, setBookingStage] = useState(0);
     const [showHelp, setShowHelp] = useState(false);
 
     const messageEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const messageContainerRef = useRef<HTMLDivElement>(null);
 
-    // Load messages from localStorage
+    // Define the welcome message
+    const WELCOME_MESSAGE =
+        "Hi! I'm Kraftodent's AI assistant. I can help with scheduling appointments and answering questions about our dental practice services. What can I help you with today?";
+
+    // Load messages from localStorage on initial load
     useEffect(() => {
         const savedMessages = getFromLocalStorage<ChatMessage[]>(
             "kraftodentChatMessages",
             []
         );
 
-        // If no messages, add welcome message
-        if (savedMessages.length === 0) {
+        // If messages exist, use them
+        if (savedMessages.length > 0) {
+            setMessages(savedMessages);
+        } else {
+            // Otherwise, add the welcome message
             const welcomeMessage: ChatMessage = {
                 id: "welcome",
                 content: WELCOME_MESSAGE,
@@ -100,8 +73,6 @@ export default function ChatInterface() {
             };
             setMessages([welcomeMessage]);
             saveToLocalStorage("kraftodentChatMessages", [welcomeMessage]);
-        } else {
-            setMessages(savedMessages);
         }
     }, []);
 
@@ -112,69 +83,6 @@ export default function ChatInterface() {
                 messageContainerRef.current.scrollHeight;
         }
     }, [messages]);
-
-    const handleBookingFlow = async (message: string) => {
-        // Initial booking request
-        if (
-            message.toLowerCase().includes("appointment") ||
-            message.toLowerCase().includes("schedule") ||
-            message.toLowerCase().includes("book")
-        ) {
-            setIsBookingFlow(true);
-            setBookingStage(1);
-            const response = await mockScheduleAppointment();
-            return response;
-        }
-
-        // If in booking flow, process next steps
-        if (isBookingFlow) {
-            if (bookingStage === 1) {
-                // User selected a time
-                if (
-                    message.toLowerCase().includes("tomorrow") ||
-                    message.toLowerCase().includes("thursday") ||
-                    message.toLowerCase().includes("friday") ||
-                    message.toLowerCase().includes("next")
-                ) {
-                    setBookingStage(2);
-
-                    // Extract date and time information from the message
-                    let date = "tomorrow";
-                    let time = "10:00 AM";
-
-                    if (message.toLowerCase().includes("thursday")) {
-                        date = "Thursday, May 23";
-                    } else if (message.toLowerCase().includes("friday")) {
-                        date = "Friday, May 24";
-                    }
-
-                    if (message.toLowerCase().includes("2:30")) {
-                        time = "2:30 PM";
-                    } else if (message.toLowerCase().includes("11:15")) {
-                        time = "11:15 AM";
-                    } else if (message.toLowerCase().includes("9:30")) {
-                        time = "9:30 AM";
-                    }
-
-                    const confirmation = await mockScheduleAppointment(
-                        date,
-                        time
-                    );
-
-                    // Reset booking flow after confirmation
-                    setTimeout(() => {
-                        setIsBookingFlow(false);
-                        setBookingStage(0);
-                    }, 2000);
-
-                    return confirmation;
-                }
-            }
-        }
-
-        // Default to sending to webhook if not part of booking flow
-        return null;
-    };
 
     const sendMessage = async (content: string) => {
         if (!content.trim()) return;
@@ -199,38 +107,28 @@ export default function ChatInterface() {
         setIsLoading(true);
 
         try {
-            // Check if this is part of the booking flow
-            const bookingResponse = await handleBookingFlow(content);
+            // Send message to n8n webhook
+            const response = await fetch(N8N_WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: content,
+                    userId: "demo-user",
+                    timestamp: Date.now(),
+                    messageHistory: messages.map((msg) => ({
+                        content: msg.content,
+                        sender: msg.sender,
+                    })),
+                }),
+            });
 
-            let responseContent;
-            let isConfirmation = false;
+            const responseContent = await response.text();
 
-            if (bookingResponse) {
-                responseContent = bookingResponse;
-                // Check if this is a booking confirmation
-                if (bookingResponse.includes("appointment is scheduled")) {
-                    isConfirmation = true;
-                }
-            } else {
-                // If not part of booking flow, send to webhook
-                try {
-                    const response = await fetch(N8N_WEBHOOK_URL, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            message: content,
-                            userId: "demo-user",
-                            timestamp: Date.now(),
-                        }),
-                    });
-
-                    responseContent = await response.text();
-                } catch (error) {
-                    console.error("Error sending to webhook:", error);
-                    responseContent =
-                        "Sorry, I couldn't process your request. Please try again.";
-                }
-            }
+            // Check if this is a booking confirmation by looking for keywords
+            const isConfirmation =
+                responseContent.toLowerCase().includes("appointment") &&
+                (responseContent.toLowerCase().includes("confirm") ||
+                    responseContent.toLowerCase().includes("scheduled"));
 
             // Create bot response message
             const botMessage: ChatMessage = {
@@ -271,16 +169,16 @@ export default function ChatInterface() {
     };
 
     const clearChat = () => {
-        // Keep only welcome message
-        const welcomeMessage = messages.find((msg) => msg.id === "welcome");
-        const newMessages = welcomeMessage ? [welcomeMessage] : [];
+        // Keep only the welcome message
+        const welcomeMessage: ChatMessage = {
+            id: "welcome",
+            content: WELCOME_MESSAGE,
+            sender: "bot",
+            timestamp: Date.now(),
+        };
 
-        setMessages(newMessages);
-        saveToLocalStorage("kraftodentChatMessages", newMessages);
-
-        // Reset booking flow state
-        setIsBookingFlow(false);
-        setBookingStage(0);
+        setMessages([welcomeMessage]);
+        saveToLocalStorage("kraftodentChatMessages", [welcomeMessage]);
     };
 
     const toggleHelp = () => {
@@ -382,6 +280,34 @@ export default function ChatInterface() {
                             transition={{ duration: 0.3 }}
                         >
                             <ChatBubble message={message} />
+
+                            {/* Render confirmation UI if this is a booking confirmation */}
+                            {message.isBookingConfirmation &&
+                                message.sender === "bot" && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{
+                                            duration: 0.3,
+                                            delay: 0.3,
+                                        }}
+                                        className="mt-4 bg-green-50 p-4 rounded-lg border border-green-200"
+                                    >
+                                        <div className="flex items-center space-x-3 mb-2">
+                                            <div className="p-2 bg-green-100 rounded-full text-green-600">
+                                                <Clock size={16} />
+                                            </div>
+                                            <h4 className="font-medium text-green-800">
+                                                Appointment Confirmed!
+                                            </h4>
+                                        </div>
+
+                                        <p className="text-sm text-green-700">
+                                            You'll receive a reminder before
+                                            your appointment
+                                        </p>
+                                    </motion.div>
+                                )}
                         </motion.div>
                     ))}
                 </AnimatePresence>

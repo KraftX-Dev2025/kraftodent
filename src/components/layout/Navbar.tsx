@@ -32,6 +32,16 @@ const navLinks = [
         hasChildren: false,
     },
     {
+        title: "Pricing",
+        href: "/#pricing",
+        hasChildren: false,
+    },
+    {
+        title: "FAQ",
+        href: "/#faq",
+        hasChildren: false,
+    },
+    {
         title: "Try Demo",
         href: "/demo",
         highlight: true,
