@@ -246,13 +246,8 @@ export default function DashboardInterface() {
             <div className="bg-white p-4 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center">
-                        <img
-                            src="/Icon.png"
-                            alt="Kraftodent"
-                            className="h-8 w-8 mr-2"
-                        />
                         <h2 className="text-lg font-semibold text-gray-800">
-                            Kraftodent Dashboard
+                            Dashboard
                         </h2>
                         {lastUpdated && (
                             <span className="ml-4 text-xs text-gray-500">
