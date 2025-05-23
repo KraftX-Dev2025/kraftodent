@@ -207,7 +207,7 @@ export default function Hero() {
                                         size={20}
                                         className="text-blue-600"
                                     />
-                                    Try Interactive Demo
+                                    See it in action!
                                 </Button>
                             </Link>
                         </motion.div>

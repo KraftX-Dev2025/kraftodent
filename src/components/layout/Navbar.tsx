@@ -41,12 +41,6 @@ const navLinks = [
         href: "/#faq",
         hasChildren: false,
     },
-    {
-        title: "Try Demo",
-        href: "/demo",
-        highlight: true,
-        hasChildren: false,
-    },
 ];
 
 export default function Navbar() {
@@ -162,38 +156,18 @@ export default function Navbar() {
                             ) : (
                                 // Regular link
                                 <Link key={link.href} href={link.href}>
-                                    {link.highlight ? (
-                                        <motion.div
-                                            whileHover={{ scale: 1.05 }}
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{
-                                                delay: 0.1 * index,
-                                                duration: 0.5,
-                                            }}
-                                        >
-                                            <Button
-                                                variant="outline"
-                                                className="text-blue-600 border-blue-600 hover:bg-blue-50 flex items-center gap-1"
-                                            >
-                                                <MessageSquare size={16} />
-                                                {link.title}
-                                            </Button>
-                                        </motion.div>
-                                    ) : (
-                                        <motion.span
-                                            className="text-gray-600 hover:text-blue-600 transition-colors text-sm lg:text-base px-3 py-2"
-                                            whileHover={{ scale: 1.05 }}
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{
-                                                delay: 0.1 * index,
-                                                duration: 0.5,
-                                            }}
-                                        >
-                                            {link.title}
-                                        </motion.span>
-                                    )}
+                                    <motion.span
+                                        className="text-gray-600 hover:text-blue-600 transition-colors text-sm lg:text-base px-3 py-2"
+                                        whileHover={{ scale: 1.05 }}
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{
+                                            delay: 0.1 * index,
+                                            duration: 0.5,
+                                        }}
+                                    >
+                                        {link.title}
+                                    </motion.span>
                                 </Link>
                             )
                         )}
@@ -265,22 +239,12 @@ export default function Navbar() {
                                             // Regular mobile link
                                             <Link
                                                 href={link.href}
-                                                className={`block px-4 py-3 ${
-                                                    link.highlight
-                                                        ? "text-blue-600 font-medium"
-                                                        : "text-gray-700"
-                                                } hover:bg-gray-50`}
+                                                className={`block px-4 py-3 ${"text-gray-700"} hover:bg-gray-50`}
                                                 onClick={() =>
                                                     setIsMobileMenuOpen(false)
                                                 }
                                             >
                                                 <div className="flex items-center">
-                                                    {link.highlight && (
-                                                        <MessageSquare
-                                                            size={16}
-                                                            className="mr-2"
-                                                        />
-                                                    )}
                                                     {link.title}
                                                 </div>
                                             </Link>

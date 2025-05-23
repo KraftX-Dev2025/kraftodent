@@ -17,7 +17,7 @@ interface ChatBubbleProps {
 export default function ChatBubble({ message }: ChatBubbleProps) {
     const isUser = message.sender === "user";
 
-    // Process message content to add formatting
+    // Process message content to add formatting and links
     const processContent = (content: string) => {
         // Replace newlines with <br>
         let processedContent = content.replace(/\n/g, "<br>");
@@ -26,6 +26,12 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
         processedContent = processedContent.replace(
             /^• (.+)$/gm,
             '<div class="flex items-start my-1"><span class="mr-1">•</span><span>$1</span></div>'
+        );
+
+        // Convert [text](url) markdown-style links to clickable links
+        processedContent = processedContent.replace(
+            /\[([^\]]+)\]\(([^)]+)\)/g,
+            '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline inline-flex items-center gap-1">$1 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>'
         );
 
         return processedContent;

@@ -201,7 +201,7 @@ export default function ChatInterface() {
                     id: `bot-${Date.now()}`,
                     content: `Perfect! Before we can help you book an appointment, please fill out our quick patient information form. This helps us provide you with the best care possible.
 
-📋 Please fill out this form: https://forms.gle/fJkCV2HKnc23jEdB7
+📋 Please fill out [this form](https://forms.gle/fJkCV2HKnc23jEdB7).
 
 Once you've submitted the form, just let me know and I'll help you schedule your appointment!`,
                     sender: "bot",
