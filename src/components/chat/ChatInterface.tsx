@@ -1,13 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, RefreshCw, HelpCircle, Clock, Sparkles } from "lucide-react";
+import {
+    Send,
+    RefreshCw,
+    HelpCircle,
+    Clock,
+    Sparkles,
+    User,
+    Phone,
+    Mail,
+    ExternalLink,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ChatBubble from "./ChatBubble";
 
 // Define the webhook URL
 const N8N_WEBHOOK_URL =
-    "https://leotekg.app.n8n.cloud/webhook-test/f298d6c0-d7c8-4ee4-9703-278436367d82";
+    "https://leotekg.app.n8n.cloud/webhook/f298d6c0-d7c8-4ee4-9703-278436367d82";
 
 // Define message type
 interface ChatMessage {
@@ -16,6 +26,14 @@ interface ChatMessage {
     sender: "user" | "bot";
     timestamp: number;
     isBookingConfirmation?: boolean;
+}
+
+// Define user data interface
+interface UserData {
+    name: string;
+    contact: string; // email or phone
+    contactType: "email" | "phone";
+    isOnboarded: boolean;
 }
 
 // Helper functions for localStorage
@@ -39,40 +57,75 @@ function getFromLocalStorage<T>(key: string, defaultValue: T): T {
     }
 }
 
+// Helper function to validate email
+function isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Helper function to validate phone
+function isValidPhone(phone: string): boolean {
+    const phoneRegex = /^[\+]?[1-9][\d]{3,14}$/;
+    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ""));
+}
+
 export default function ChatInterface() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputMessage, setInputMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [showHelp, setShowHelp] = useState(false);
 
+    // Onboarding states
+    const [userData, setUserData] = useState<UserData | null>(null);
+    const [onboardingStep, setOnboardingStep] = useState<
+        "name" | "contact" | "complete"
+    >("name");
+    const [tempName, setTempName] = useState("");
+    const [tempContact, setTempContact] = useState("");
+
     const messageEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const messageContainerRef = useRef<HTMLDivElement>(null);
 
-    // Define the welcome message
-    const WELCOME_MESSAGE =
-        "Hi! I'm Kraftodent's AI assistant. I can help with scheduling appointments and answering questions about our dental practice services. What can I help you with today?";
-
-    // Load messages from localStorage on initial load
+    // Load user data and messages from localStorage on initial load
     useEffect(() => {
+        const savedUserData = getFromLocalStorage<UserData | null>(
+            "kraftodentUserData",
+            null
+        );
         const savedMessages = getFromLocalStorage<ChatMessage[]>(
             "kraftodentChatMessages",
             []
         );
 
-        // If messages exist, use them
-        if (savedMessages.length > 0) {
-            setMessages(savedMessages);
+        if (savedUserData) {
+            setUserData(savedUserData);
+            setOnboardingStep("complete");
+
+            // If messages exist, use them
+            if (savedMessages.length > 0) {
+                setMessages(savedMessages);
+            } else {
+                // Add personalized welcome message
+                const welcomeMessage: ChatMessage = {
+                    id: "welcome",
+                    content: `Hello ${savedUserData.name}! Welcome back to Kraftodent. How can I assist you today? I can help you book an appointment or answer any questions about our dental services.`,
+                    sender: "bot",
+                    timestamp: Date.now(),
+                };
+                setMessages([welcomeMessage]);
+                saveToLocalStorage("kraftodentChatMessages", [welcomeMessage]);
+            }
         } else {
-            // Otherwise, add the welcome message
-            const welcomeMessage: ChatMessage = {
-                id: "welcome",
-                content: WELCOME_MESSAGE,
+            // Show onboarding welcome message
+            const onboardingMessage: ChatMessage = {
+                id: "onboarding-welcome",
+                content:
+                    "Welcome to Kraftodent! To get started with our demo, I'll need a few quick details. What's your name?",
                 sender: "bot",
                 timestamp: Date.now(),
             };
-            setMessages([welcomeMessage]);
-            saveToLocalStorage("kraftodentChatMessages", [welcomeMessage]);
+            setMessages([onboardingMessage]);
         }
     }, []);
 
@@ -84,8 +137,119 @@ export default function ChatInterface() {
         }
     }, [messages]);
 
+    // Handle onboarding input
+    const handleOnboardingInput = (value: string) => {
+        if (onboardingStep === "name") {
+            if (value.trim().length >= 2) {
+                setTempName(value.trim());
+
+                // Add user message
+                const userMessage: ChatMessage = {
+                    id: `user-${Date.now()}`,
+                    content: value,
+                    sender: "user",
+                    timestamp: Date.now(),
+                };
+
+                // Add bot response
+                const botMessage: ChatMessage = {
+                    id: `bot-${Date.now()}`,
+                    content: `Nice to meet you, ${value.trim()}! Now I'll need either your email address or phone number to proceed.`,
+                    sender: "bot",
+                    timestamp: Date.now() + 1,
+                };
+
+                const updatedMessages = [...messages, userMessage, botMessage];
+                setMessages(updatedMessages);
+                setOnboardingStep("contact");
+                setInputMessage("");
+            }
+        } else if (onboardingStep === "contact") {
+            const contact = value.trim();
+            let isValid = false;
+            let contactType: "email" | "phone" = "email";
+
+            if (isValidEmail(contact)) {
+                isValid = true;
+                contactType = "email";
+            } else if (isValidPhone(contact)) {
+                isValid = true;
+                contactType = "phone";
+            }
+
+            if (isValid) {
+                const newUserData: UserData = {
+                    name: tempName,
+                    contact: contact,
+                    contactType: contactType,
+                    isOnboarded: false,
+                };
+
+                setUserData(newUserData);
+                saveToLocalStorage("kraftodentUserData", newUserData);
+
+                // Add user message
+                const userMessage: ChatMessage = {
+                    id: `user-${Date.now()}`,
+                    content: value,
+                    sender: "user",
+                    timestamp: Date.now(),
+                };
+
+                // Add bot response with form link
+                const botMessage: ChatMessage = {
+                    id: `bot-${Date.now()}`,
+                    content: `Perfect! Before we can help you book an appointment, please fill out our quick patient information form. This helps us provide you with the best care possible.
+
+📋 Please fill out this form: https://forms.gle/fJkCV2HKnc23jEdB7
+
+Once you've submitted the form, just let me know and I'll help you schedule your appointment!`,
+                    sender: "bot",
+                    timestamp: Date.now() + 1,
+                };
+
+                const updatedMessages = [...messages, userMessage, botMessage];
+                setMessages(updatedMessages);
+                saveToLocalStorage("kraftodentChatMessages", updatedMessages);
+
+                setOnboardingStep("complete");
+                setInputMessage("");
+            } else {
+                // Invalid contact - show error message
+                const userMessage: ChatMessage = {
+                    id: `user-${Date.now()}`,
+                    content: value,
+                    sender: "user",
+                    timestamp: Date.now(),
+                };
+
+                const errorMessage: ChatMessage = {
+                    id: `error-${Date.now()}`,
+                    content:
+                        "Please enter a valid email address or phone number. For example:\n• Email: john@example.com\n• Phone: +91 9876543210",
+                    sender: "bot",
+                    timestamp: Date.now() + 1,
+                };
+
+                const updatedMessages = [
+                    ...messages,
+                    userMessage,
+                    errorMessage,
+                ];
+                setMessages(updatedMessages);
+                setInputMessage("");
+            }
+        }
+    };
+
     const sendMessage = async (content: string) => {
         if (!content.trim()) return;
+
+        // Handle onboarding if not complete
+        if (onboardingStep !== "complete") {
+            handleOnboardingInput(content);
+            return;
+        }
 
         // Create user message
         const userMessage: ChatMessage = {
@@ -107,18 +271,14 @@ export default function ChatInterface() {
         setIsLoading(true);
 
         try {
-            // Send message to n8n webhook
+            // Send message to n8n webhook with user data
             const response = await fetch(N8N_WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     message: content,
-                    userId: "demo-user",
+                    userData: userData,
                     timestamp: Date.now(),
-                    messageHistory: messages.map((msg) => ({
-                        content: msg.content,
-                        sender: msg.sender,
-                    })),
                 }),
             });
 
@@ -149,7 +309,8 @@ export default function ChatInterface() {
             // Create error message
             const errorMessage: ChatMessage = {
                 id: `error-${Date.now()}`,
-                content: "Sorry, there was an error. Please try again later.",
+                content:
+                    "Sorry, there was an error connecting to our system. Please try again later or call us directly at +91 90280 02031.",
                 sender: "bot",
                 timestamp: Date.now(),
             };
@@ -169,37 +330,65 @@ export default function ChatInterface() {
     };
 
     const clearChat = () => {
-        // Keep only the welcome message
-        const welcomeMessage: ChatMessage = {
-            id: "welcome",
-            content: WELCOME_MESSAGE,
+        // Clear all data and restart onboarding
+        localStorage.removeItem("kraftodentChatMessages");
+        localStorage.removeItem("kraftodentUserData");
+
+        setUserData(null);
+        setOnboardingStep("name");
+        setTempName("");
+        setTempContact("");
+
+        const onboardingMessage: ChatMessage = {
+            id: "onboarding-welcome",
+            content:
+                "Welcome to Kraftodent! To get started with our demo, I'll need a few quick details. What's your name?",
             sender: "bot",
             timestamp: Date.now(),
         };
-
-        setMessages([welcomeMessage]);
-        saveToLocalStorage("kraftodentChatMessages", [welcomeMessage]);
+        setMessages([onboardingMessage]);
     };
 
     const toggleHelp = () => {
         setShowHelp(!showHelp);
     };
 
-    // Quick examples for users to try
-    const quickResponses = [
-        {
-            text: "Book appointment",
-            action: () => sendMessage("I'd like to book an appointment"),
-        },
-        {
-            text: "Features",
-            action: () => sendMessage("What features do you offer?"),
-        },
-        {
-            text: "How it works",
-            action: () => sendMessage("How does the AI receptionist work?"),
-        },
-    ];
+    // Get placeholder text based on onboarding step
+    const getPlaceholderText = () => {
+        if (onboardingStep === "name") {
+            return "Enter your name...";
+        } else if (onboardingStep === "contact") {
+            return "Enter your email or phone number...";
+        } else {
+            return "Type your message...";
+        }
+    };
+
+    // Quick responses based on onboarding state
+    const getQuickResponses = () => {
+        if (onboardingStep === "complete" && userData) {
+            return [
+                {
+                    text: "Book appointment",
+                    action: () =>
+                        sendMessage("I'd like to book an appointment"),
+                },
+                {
+                    text: "Clinic services",
+                    action: () => sendMessage("What services do you offer?"),
+                },
+                {
+                    text: "Clinic hours",
+                    action: () => sendMessage("What are your clinic hours?"),
+                },
+                {
+                    text: "Form submitted",
+                    action: () => sendMessage("I have submitted the form"),
+                },
+            ];
+        }
+        return [];
+    };
 
     return (
         <div className="flex flex-col h-[600px] md:h-[700px] bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
@@ -211,6 +400,11 @@ export default function ChatInterface() {
                     </div>
                     <div>
                         <h3 className="font-medium">Kraftodent AI</h3>
+                        <p className="text-xs text-blue-100">
+                            {userData
+                                ? `Hello, ${userData.name}`
+                                : "Demo Assistant"}
+                        </p>
                     </div>
                 </div>
 
@@ -236,6 +430,48 @@ export default function ChatInterface() {
                 </div>
             </div>
 
+            {/* User Info Panel */}
+            {userData && (
+                <div className="bg-blue-50 border-b border-blue-200 p-2">
+                    <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center space-x-2">
+                            <User size={14} className="text-blue-600" />
+                            <span className="text-blue-800 font-medium">
+                                {userData.name}
+                            </span>
+                            <span className="text-blue-600">•</span>
+                            <div className="flex items-center space-x-1">
+                                {userData.contactType === "email" ? (
+                                    <Mail size={12} className="text-blue-600" />
+                                ) : (
+                                    <Phone
+                                        size={12}
+                                        className="text-blue-600"
+                                    />
+                                )}
+                                <span className="text-blue-700">
+                                    {userData.contact}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                            <div
+                                className={`w-2 h-2 rounded-full ${
+                                    userData.isOnboarded
+                                        ? "bg-green-500"
+                                        : "bg-yellow-500"
+                                }`}
+                            ></div>
+                            <span className="text-xs text-blue-700">
+                                {userData.isOnboarded
+                                    ? "Ready"
+                                    : "Pending form"}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Help Panel */}
             <AnimatePresence>
                 {showHelp && (
@@ -246,22 +482,44 @@ export default function ChatInterface() {
                         className="bg-blue-50 border-b border-blue-200 p-3"
                     >
                         <h4 className="font-medium text-blue-800 mb-2">
-                            About this demo
+                            About Kraftodent Demo
                         </h4>
-                        <p className="text-sm text-blue-700 mb-2">
-                            This is a demo of Kraftodent's AI dental
-                            receptionist. It can:
-                        </p>
-                        <ul className="text-sm text-blue-700 list-disc pl-5 space-y-1 mb-2">
-                            <li>Schedule appointments</li>
-                            <li>Answer questions about our service</li>
-                            <li>Explain how our AI works</li>
-                            <li>Discuss pricing and features</li>
-                        </ul>
-                        <p className="text-sm text-blue-700">
-                            For a full demonstration with your practice's
-                            specific workflows, please book a consultation.
-                        </p>
+                        <div className="text-sm text-blue-700 space-y-2">
+                            <p>
+                                This demo shows how our AI dental receptionist
+                                works:
+                            </p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <div>
+                                    <strong>✓ Patient onboarding</strong>
+                                    <p className="text-xs">
+                                        Collect basic information
+                                    </p>
+                                </div>
+                                <div>
+                                    <strong>✓ Appointment scheduling</strong>
+                                    <p className="text-xs">
+                                        Book available time slots
+                                    </p>
+                                </div>
+                                <div>
+                                    <strong>✓ Answer clinic questions</strong>
+                                    <p className="text-xs">
+                                        Services, hours, procedures
+                                    </p>
+                                </div>
+                                <div>
+                                    <strong>✓ 24/7 availability</strong>
+                                    <p className="text-xs">
+                                        Always ready to help
+                                    </p>
+                                </div>
+                            </div>
+                            <p className="text-xs border-t border-blue-200 pt-2 mt-2">
+                                For emergencies, call:{" "}
+                                <strong>+91 90280 02031</strong>
+                            </p>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -301,10 +559,10 @@ export default function ChatInterface() {
                                                 Appointment Confirmed!
                                             </h4>
                                         </div>
-
                                         <p className="text-sm text-green-700">
-                                            You'll receive a reminder before
-                                            your appointment
+                                            You'll receive a confirmation
+                                            message and reminder before your
+                                            appointment.
                                         </p>
                                     </motion.div>
                                 )}
@@ -330,24 +588,25 @@ export default function ChatInterface() {
                                 style={{ animationDelay: "0.4s" }}
                             ></span>
                         </div>
-                        <span>Typing...</span>
+                        <span>AI is thinking...</span>
                     </motion.div>
                 )}
 
                 <div ref={messageEndRef} />
             </div>
 
-            {/* Quick Responses - only show for first interaction */}
-            {messages.length <= 1 && (
+            {/* Quick Responses */}
+            {getQuickResponses().length > 0 && (
                 <div className="px-4 py-2 bg-gray-50 border-t border-gray-200">
-                    <div className="flex flex-wrap gap-2 justify-center">
-                        {quickResponses.map((item, index) => (
+                    <div className="flex flex-wrap gap-2">
+                        {getQuickResponses().map((item, index) => (
                             <Button
                                 key={index}
                                 variant="outline"
                                 size="sm"
                                 className="text-xs py-1 h-auto text-blue-600 border-blue-200 hover:bg-blue-50"
                                 onClick={item.action}
+                                disabled={isLoading}
                             >
                                 {item.text}
                             </Button>
@@ -366,7 +625,7 @@ export default function ChatInterface() {
                         ref={inputRef}
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
-                        placeholder="Type your message..."
+                        placeholder={getPlaceholderText()}
                         className="bg-white border-gray-200"
                         disabled={isLoading}
                     />
