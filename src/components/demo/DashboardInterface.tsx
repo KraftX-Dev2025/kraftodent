@@ -85,9 +85,8 @@ const StatCard = ({
                         <ArrowDown size={14} className="text-red-500 mr-1" />
                     )}
                     <span
-                        className={`text-xs ${
-                            positive ? "text-green-500" : "text-red-500"
-                        }`}
+                        className={`text-xs ${positive ? "text-green-500" : "text-red-500"
+                            }`}
                     >
                         {change} from yesterday
                     </span>
@@ -243,14 +242,14 @@ export default function DashboardInterface() {
     return (
         <div className="bg-gray-100 rounded-lg overflow-x-auto shadow-md border border-gray-200 h-[700px] flex flex-col">
             {/* Dashboard Header */}
-            <div className="bg-white p-4 border-b border-gray-200">
+            <div className="bg-blue-600 text-white p-4 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center">
-                        <h2 className="text-lg font-semibold text-gray-800 me-2">
+                        <h2 className="text-lg font-semibold me-2">
                             Dashboard
                         </h2>
                         {lastUpdated && (
-                            <span className="ml-4 text-xs text-gray-500 hidden sm:flex">
+                            <span className="ml-4 text-xs hidden sm:flex">
                                 Last updated: {lastUpdated.toLocaleTimeString()}
                             </span>
                         )}
@@ -259,7 +258,7 @@ export default function DashboardInterface() {
                         <Button
                             size="sm"
                             variant="ghost"
-                            className="text-gray-500"
+                            className=""
                             onClick={handleRefresh}
                             disabled={loading}
                             title="Refresh data"
@@ -272,21 +271,18 @@ export default function DashboardInterface() {
                         <Button
                             size="sm"
                             variant="ghost"
-                            className="text-gray-500"
                         >
                             <Bell size={18} />
                         </Button>
                         <Button
                             size="sm"
                             variant="ghost"
-                            className="text-gray-500"
                         >
                             <Settings size={18} />
                         </Button>
                         <Button
                             size="sm"
                             variant="ghost"
-                            className="text-gray-500"
                         >
                             <HelpCircle size={18} />
                         </Button>
@@ -489,11 +485,10 @@ export default function DashboardInterface() {
                                     </div>
                                     <div className="flex flex-col md:flex-row border rounded-md overflow-hidden">
                                         <button
-                                            className={`px-3 py-1 text-xs ${
-                                                activeTab === "past"
+                                            className={`px-3 py-1 text-xs ${activeTab === "past"
                                                     ? "bg-blue-600 text-white"
                                                     : "bg-white text-gray-500"
-                                            }`}
+                                                }`}
                                             onClick={() =>
                                                 setActiveTab("past")
                                             }
@@ -501,11 +496,10 @@ export default function DashboardInterface() {
                                             Past ({todaysBookings.length})
                                         </button>
                                         <button
-                                            className={`px-3 py-1 text-xs ${
-                                                activeTab === "today"
+                                            className={`px-3 py-1 text-xs ${activeTab === "today"
                                                     ? "bg-blue-600 text-white"
                                                     : "bg-white text-gray-500"
-                                            }`}
+                                                }`}
                                             onClick={() =>
                                                 setActiveTab("today")
                                             }
@@ -513,11 +507,10 @@ export default function DashboardInterface() {
                                             Today ({todaysBookings.length})
                                         </button>
                                         <button
-                                            className={`px-3 py-1 text-xs ${
-                                                activeTab === "upcoming"
+                                            className={`px-3 py-1 text-xs ${activeTab === "upcoming"
                                                     ? "bg-blue-600 text-white"
                                                     : "bg-white text-gray-500"
-                                            }`}
+                                                }`}
                                             onClick={() =>
                                                 setActiveTab("upcoming")
                                             }
@@ -588,11 +581,10 @@ export default function DashboardInterface() {
                                         <p className="text-gray-500">
                                             {searchQuery
                                                 ? `No appointments match "${searchQuery}"`
-                                                : `No ${
-                                                      activeTab === "today"
-                                                          ? "appointments today"
-                                                          : "upcoming appointments"
-                                                  }`}
+                                                : `No ${activeTab === "today"
+                                                    ? "appointments today"
+                                                    : "upcoming appointments"
+                                                }`}
                                         </p>
                                         {searchQuery && (
                                             <Button
@@ -642,11 +634,10 @@ export default function DashboardInterface() {
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <div
-                                        className={`w-2 h-2 rounded-full ${
-                                            error
+                                        className={`w-2 h-2 rounded-full ${error
                                                 ? "bg-red-500"
                                                 : "bg-green-500"
-                                        }`}
+                                            }`}
                                     ></div>
                                     <span className="text-xs text-blue-700">
                                         {error ? "Disconnected" : "Connected"}
@@ -657,6 +648,7 @@ export default function DashboardInterface() {
                     </div>
                 </div>
             </div>
+            <div className="bg-blue-600 h-[2rem]"></div>
         </div>
     );
 }

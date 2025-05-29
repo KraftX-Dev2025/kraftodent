@@ -585,7 +585,7 @@ export default function ChatInterface() {
                                 style={{ animationDelay: "0.4s" }}
                             ></span>
                         </div>
-                        <span>AI is thinking...</span>
+                        {/* <span>AI is thinking...</span> */}
                     </motion.div>
                 )}
 
@@ -617,7 +617,7 @@ export default function ChatInterface() {
                 onSubmit={handleSubmit}
                 className="p-3 border-t border-gray-200 bg-white"
             >
-                <div className="flex space-x-2">
+                <div className="flex gap-4">
                     <Input
                         ref={inputRef}
                         value={inputMessage}
