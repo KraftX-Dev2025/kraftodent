@@ -241,16 +241,16 @@ export default function DashboardInterface() {
     };
 
     return (
-        <div className="bg-gray-100 rounded-lg overflow-hidden shadow-md border border-gray-200 h-[700px] flex flex-col">
+        <div className="bg-gray-100 rounded-lg overflow-x-auto shadow-md border border-gray-200 h-[700px] flex flex-col">
             {/* Dashboard Header */}
             <div className="bg-white p-4 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center">
-                        <h2 className="text-lg font-semibold text-gray-800">
+                        <h2 className="text-lg font-semibold text-gray-800 me-2">
                             Dashboard
                         </h2>
                         {lastUpdated && (
-                            <span className="ml-4 text-xs text-gray-500">
+                            <span className="ml-4 text-xs text-gray-500 hidden sm:flex">
                                 Last updated: {lastUpdated.toLocaleTimeString()}
                             </span>
                         )}
@@ -404,7 +404,7 @@ export default function DashboardInterface() {
                                         Here's what's happening at your practice
                                         today
                                     </p>
-                                    <div className="flex gap-3">
+                                    <div className="flex flex-col sm:flex-row gap-3">
                                         <Button
                                             size="sm"
                                             className="bg-white text-blue-600 hover:bg-blue-50"
@@ -461,7 +461,7 @@ export default function DashboardInterface() {
                             className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 lg:col-span-2"
                         >
                             <div className="flex justify-between items-center mb-4">
-                                <h3 className="font-medium text-gray-800">
+                                <h3 className="font-medium text-gray-800 text-sm sm:text-base">
                                     {activeTab === "today"
                                         ? "Today's"
                                         : "Upcoming"}{" "}
@@ -472,7 +472,7 @@ export default function DashboardInterface() {
                                         </span>
                                     )}
                                 </h3>
-                                <div className="flex items-center space-x-2">
+                                <div className="flex flex-col sm:flex-row items-center gap-2">
                                     <div className="relative">
                                         <Search
                                             size={14}
@@ -487,7 +487,19 @@ export default function DashboardInterface() {
                                             className="pl-7 text-xs h-8"
                                         />
                                     </div>
-                                    <div className="flex border rounded-md overflow-hidden">
+                                    <div className="flex flex-col md:flex-row border rounded-md overflow-hidden">
+                                        <button
+                                            className={`px-3 py-1 text-xs ${
+                                                activeTab === "past"
+                                                    ? "bg-blue-600 text-white"
+                                                    : "bg-white text-gray-500"
+                                            }`}
+                                            onClick={() =>
+                                                setActiveTab("past")
+                                            }
+                                        >
+                                            Past ({todaysBookings.length})
+                                        </button>
                                         <button
                                             className={`px-3 py-1 text-xs ${
                                                 activeTab === "today"

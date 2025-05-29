@@ -47,10 +47,10 @@ export default function DemoPage() {
                         {/* Tab Navigation */}
                         <Tabs
                             defaultValue="chat"
-                            className="w-full max-w-7xl mx-auto mb-8"
+                            className="w-full mx-auto mb-8"
                             onValueChange={(value) => setActiveTab(value)}
                         >
-                            <TabsList className="grid w-full grid-cols-2">
+                            <TabsList className="grid w-full grid-cols-2 gap-2 mb-16 sm:mb-2">
                                 <TabsTrigger value="chat" className="text-base">
                                     AI Receptionist
                                 </TabsTrigger>
@@ -62,7 +62,7 @@ export default function DemoPage() {
                                 </TabsTrigger>
                             </TabsList>
 
-                            <TabsContent value="chat" className="mt-6">
+                            <TabsContent value="chat" className="mt-8">
                                 <div className="flex justify-center">
                                     {/* Chat Interface - Centered, Simple Layout */}
                                     <motion.div
@@ -72,7 +72,6 @@ export default function DemoPage() {
                                         className="w-full max-w-7xl"
                                     >
                                         <ChatInterface />
-
                                         <div className="mt-4 text-center">
                                             <motion.p
                                                 initial={{ opacity: 0 }}
@@ -88,7 +87,7 @@ export default function DemoPage() {
                                                     href="/#contact"
                                                     className="text-blue-600 font-medium ml-1"
                                                 >
-                                                    contact us
+                                                    Contact us
                                                 </Link>
                                                 .
                                             </motion.p>
@@ -98,7 +97,7 @@ export default function DemoPage() {
                             </TabsContent>
 
                             <TabsContent value="dashboard" className="mt-6">
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <div className="gap-8">
                                     {/* Dashboard Interface */}
                                     <motion.div
                                         initial={{ opacity: 0, y: 20 }}
@@ -107,7 +106,7 @@ export default function DemoPage() {
                                             duration: 0.5,
                                             delay: 0.2,
                                         }}
-                                        className="lg:col-span-2"
+                                        className="lg:col-span-2 overflow-auto"
                                     >
                                         <DashboardInterface />
                                     </motion.div>
@@ -120,10 +119,10 @@ export default function DemoPage() {
                                             duration: 0.5,
                                             delay: 0.3,
                                         }}
-                                        className="space-y-6"
+                                        className="grid grid-cols-1 md:grid-cols-2 flex-col w-auto justify-center items-center gap-4 mt-4"
                                     >
                                         {/* About the Dashboard */}
-                                        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                                        <div className="bg-white flex flex-col w-full h-full justify-center items-center shadow-md p-6 shadow-blue-500 rounded-xl border border-gray-200">
                                             <h3 className="text-lg font-medium text-gray-800 mb-3">
                                                 Practice Dashboard
                                             </h3>
@@ -145,7 +144,7 @@ export default function DemoPage() {
                                         </div>
 
                                         {/* Book a Call */}
-                                        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-md p-6 text-white">
+                                        <div className="bg-gradient-to-r from-blue-600 to-blue-700 flex flex-col w-full h-full justify-center items-center shadow-md p-6 shadow-blue-500 rounded-xl text-white">
                                             <h3 className="text-lg font-medium mb-4">
                                                 See Your Own Data
                                             </h3>
@@ -155,7 +154,7 @@ export default function DemoPage() {
                                                 and workflows.
                                             </p>
                                             <Link href="/#contact">
-                                                <Button className="w-full bg-white text-blue-600 hover:bg-blue-50">
+                                                <Button className="w-[17rem] bg-white text-blue-600 hover:bg-blue-50">
                                                     Schedule a Personalized Demo
                                                 </Button>
                                             </Link>

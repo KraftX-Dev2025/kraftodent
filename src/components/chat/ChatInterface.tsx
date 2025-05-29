@@ -200,10 +200,8 @@ export default function ChatInterface() {
                 const botMessage: ChatMessage = {
                     id: `bot-${Date.now()}`,
                     content: `Perfect! Before we can help you book an appointment, please fill out our quick patient information form. This helps us provide you with the best care possible.
-
-📋 Please fill out [this form](https://forms.gle/fJkCV2HKnc23jEdB7).
-
-Once you've submitted the form, just let me know and I'll help you schedule your appointment!`,
+                    📋 Please fill out [this form](https://forms.gle/fJkCV2HKnc23jEdB7).
+                    Once you've submitted the form, just let me know and I'll help you schedule your appointment!`,
                     sender: "bot",
                     timestamp: Date.now() + 1,
                 };
@@ -391,7 +389,7 @@ Once you've submitted the form, just let me know and I'll help you schedule your
     };
 
     return (
-        <div className="flex flex-col h-[600px] md:h-[700px] bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
+        <div className="flex flex-col h-[45rem] bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
             {/* Chat Header */}
             <div className="flex items-center justify-between p-3 bg-blue-600 text-white">
                 <div className="flex items-center space-x-2">
@@ -456,11 +454,10 @@ Once you've submitted the form, just let me know and I'll help you schedule your
                         </div>
                         <div className="flex items-center space-x-1">
                             <div
-                                className={`w-2 h-2 rounded-full ${
-                                    userData.isOnboarded
-                                        ? "bg-green-500"
-                                        : "bg-yellow-500"
-                                }`}
+                                className={`w-2 h-2 rounded-full ${userData.isOnboarded
+                                    ? "bg-green-500"
+                                    : "bg-yellow-500"
+                                    }`}
                             ></div>
                             <span className="text-xs text-blue-700">
                                 {userData.isOnboarded
