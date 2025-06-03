@@ -949,7 +949,7 @@ export default function ChatInterface() {
 
     // Render chat interface (existing chat code)
     return (
-        <div className="flex flex-col h-[600px] md:h-[700px] bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
+        <div className="flex flex-col h-[45rem] bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
             {/* Chat Header */}
             <div className="flex items-center justify-between p-3 bg-blue-600 text-white">
                 <div className="flex items-center space-x-2">
@@ -1013,7 +1013,13 @@ export default function ChatInterface() {
                             </div>
                         </div>
                         <div className="flex items-center space-x-1">
-                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            <div
+                                className={`w-2 h-2 rounded-full ${
+                                    userData.isOnboarded
+                                        ? "bg-green-500"
+                                        : "bg-yellow-500"
+                                }`}
+                            ></div>
                             <span className="text-xs text-blue-700">
                                 Registered
                             </span>
@@ -1138,7 +1144,7 @@ export default function ChatInterface() {
                                 style={{ animationDelay: "0.4s" }}
                             ></span>
                         </div>
-                        <span>AI is thinking...</span>
+                        {/* <span>AI is thinking...</span> */}
                     </motion.div>
                 )}
 
@@ -1170,7 +1176,7 @@ export default function ChatInterface() {
                 onSubmit={handleSubmit}
                 className="p-3 border-t border-gray-200 bg-white"
             >
-                <div className="flex space-x-2">
+                <div className="flex gap-4">
                     <Input
                         ref={inputRef}
                         value={inputMessage}

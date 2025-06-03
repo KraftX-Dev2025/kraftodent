@@ -252,3 +252,36 @@ export const allFaqs: FAQType[] = [
         category: "Pricing",
     },
 ];
+
+export const footerLinks = [
+    {
+        title: "Product",
+        links: [
+            { text: "Features", href: "/#features" },
+            { text: "How It Works", href: "/#product" },
+            { text: "Pricing", href: "/#pricing" },
+            { text: "Demo", href: "/demo" },
+            { text: "Updates", href: "#" },
+        ],
+    },
+    {
+        title: "Resources",
+        links: [
+            { text: "Documentation", href: "#" },
+            { text: "Tutorials", href: "#" },
+            { text: "Blog", href: "#" },
+            { text: "Case Studies", href: "/#case-studies" },
+            { text: "FAQ", href: "/#faq" },
+        ],
+    },
+    {
+        title: "Company",
+        links: [
+            { text: "About Us", href: "#" },
+            { text: "Careers", href: "#" },
+            { text: "Contact", href: "/#contact" },
+            { text: "Partners", href: "#" },
+            { text: "Privacy Policy", href: "/privacy-policy" },
+        ],
+    },
+];
