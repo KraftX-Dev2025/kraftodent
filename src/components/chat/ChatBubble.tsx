@@ -1,84 +1,106 @@
+// src/components/chat/ChatBubble.tsx
+
 import React from "react";
-import { User, Bot } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Bot, User } from "lucide-react";
+import { ChatBubbleProps } from "@/types/chat";
 
-interface ChatMessage {
-    id: string;
-    content: string;
-    sender: "user" | "bot";
-    timestamp: number;
-    isBookingConfirmation?: boolean;
-}
+const processContent = (content: string): string => {
+    // Handle newlines
+    let processed = content.replace(/\n/g, "<br>");
 
-interface ChatBubbleProps {
-    message: ChatMessage;
-}
+    // Handle bullet points
+    processed = processed.replace(/^\s*[\*\-\•]\s+(.+)$/gm, "<li>$1</li>");
+    if (processed.includes("<li>")) {
+        processed = processed.replace(/(<li>.*<\/li>)/, "<ul>$1</ul>");
+    }
+
+    // Handle markdown-style links [text](url)
+    processed = processed.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">$1</a>'
+    );
+
+    // Handle simple URLs
+    processed = processed.replace(
+        /(https?:\/\/[^\s]+)/g,
+        '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">$1</a>'
+    );
+
+    return processed;
+};
 
 export default function ChatBubble({ message }: ChatBubbleProps) {
-    const isUser = message.sender === "user";
-
-    // Process message content to add formatting and links
-    const processContent = (content: string) => {
-        // Replace newlines with <br>
-        let processedContent = content.replace(/\n/g, "<br>");
-
-        // Format bullet points
-        processedContent = processedContent.replace(
-            /^• (.+)$/gm,
-            '<div class="flex items-start my-1"><span class="mr-1">•</span><span>$1</span></div>'
-        );
-
-        // Convert [text](url) markdown-style links to clickable links
-        processedContent = processedContent.replace(
-            /\[([^\]]+)\]\(([^)]+)\)/g,
-            '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline inline-flex items-center gap-1">$1 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>'
-        );
-
-        return processedContent;
-    };
+    const isBot = message.sender === "bot";
+    const processedContent = processContent(message.content);
 
     return (
-        <div
-            className={cn(
-                "flex items-start",
-                isUser ? "justify-end" : "justify-start"
-            )}
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className={`flex ${isBot ? "justify-start" : "justify-end"} mb-4`}
         >
-            {/* Avatar for bot messages */}
-            {!isUser && (
-                <div className="flex-shrink-0 mr-2">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        <Bot size={16} className="text-blue-600" />
+            <div
+                className={`flex max-w-[85%] ${
+                    isBot ? "flex-row" : "flex-row-reverse"
+                }`}
+            >
+                {/* Avatar */}
+                {isBot && (
+                    <div className="flex-shrink-0 mr-3">
+                        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                            <Bot size={16} className="text-white" />
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            <div className="max-w-[85%]">
+                {!isBot && (
+                    <div className="flex-shrink-0 ml-3">
+                        <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+                            <User size={16} className="text-white" />
+                        </div>
+                    </div>
+                )}
+
+                {/* Message Bubble */}
                 <div
-                    className={cn(
-                        "rounded-lg",
-                        isUser
-                            ? "bg-blue-600 text-white rounded-tr-none px-3 py-2"
-                            : "bg-gray-100 text-gray-800 rounded-tl-none px-3 py-2"
-                    )}
+                    className={`
+                        px-4 py-3 rounded-2xl shadow-sm
+                        ${
+                            isBot
+                                ? "bg-white border border-gray-200 text-gray-800"
+                                : "bg-blue-600 text-white"
+                        }
+                        ${
+                            message.isBookingConfirmation
+                                ? "border-green-500 bg-green-50 text-green-800"
+                                : ""
+                        }
+                        ${isBot ? "rounded-bl-md" : "rounded-br-md"}
+                    `}
                 >
+                    {/* Message Content */}
                     <div
-                        className="text-sm"
-                        dangerouslySetInnerHTML={{
-                            __html: processContent(message.content),
-                        }}
+                        className={`text-sm leading-relaxed ${
+                            message.isBookingConfirmation ? "font-medium" : ""
+                        }`}
+                        dangerouslySetInnerHTML={{ __html: processedContent }}
                     />
+
+                    {/* Timestamp */}
+                    <div
+                        className={`text-xs mt-1 ${
+                            isBot ? "text-gray-500" : "text-blue-100"
+                        }`}
+                    >
+                        {new Date(message.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        })}
+                    </div>
                 </div>
             </div>
-
-            {/* Avatar for user messages */}
-            {isUser && (
-                <div className="flex-shrink-0 ml-2">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                        <User size={16} className="text-gray-500" />
-                    </div>
-                </div>
-            )}
-        </div>
+        </motion.div>
     );
 }
