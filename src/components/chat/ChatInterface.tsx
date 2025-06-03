@@ -10,6 +10,10 @@ import {
     Phone,
     Mail,
     ExternalLink,
+    CheckCircle,
+    ArrowRight,
+    Calendar,
+    AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +23,13 @@ import ChatBubble from "./ChatBubble";
 const N8N_WEBHOOK_URL =
     "https://leotekg.app.n8n.cloud/webhook/f298d6c0-d7c8-4ee4-9703-278436367d82";
 
+// Google Sheets configuration
+const GOOGLE_SHEETS_CONFIG = {
+    spreadsheetId: "1m3HYQPZaAUSdyyonnL96IdVODe5Dh1-87QGGe8y9rkw",
+    apiKey: process.env.NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY || "",
+    range: "patient!A:M", // Adjust range to match your sheet columns
+};
+
 // Define message type
 interface ChatMessage {
     id: string;
@@ -26,6 +37,22 @@ interface ChatMessage {
     sender: "user" | "bot";
     timestamp: number;
     isBookingConfirmation?: boolean;
+}
+
+// Define patient registration data interface
+interface PatientRegistrationData {
+    timestamp: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    gender: string;
+    emailAddress: string;
+    phoneNumber: string;
+    address: string;
+    allergies: string;
+    medicalConditions: string;
+    currentDentalProblems: string;
+    dentalProblemsDetails: string;
 }
 
 // Define user data interface
@@ -69,44 +96,110 @@ function isValidPhone(phone: string): boolean {
     return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ""));
 }
 
+// Function to submit data directly to Google Sheets
+async function submitToGoogleSheets(
+    data: PatientRegistrationData
+): Promise<boolean> {
+    try {
+        // Prepare the row data in the exact order of your Google Sheets columns
+        const rowData = [
+            data.timestamp,
+            data.firstName,
+            data.lastName,
+            data.dateOfBirth,
+            data.gender,
+            data.emailAddress,
+            data.phoneNumber,
+            data.address,
+            data.allergies,
+            data.medicalConditions,
+            data.currentDentalProblems,
+            data.dentalProblemsDetails,
+        ];
+
+        // Use Google Sheets API to append the row
+        const response = await fetch(
+            `https://sheets.googleapis.com/v4/spreadsheets/${GOOGLE_SHEETS_CONFIG.spreadsheetId}/values/${GOOGLE_SHEETS_CONFIG.range}:append?valueInputOption=RAW&key=${GOOGLE_SHEETS_CONFIG.apiKey}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    values: [rowData],
+                }),
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Error submitting to Google Sheets:", error);
+        return false;
+    }
+}
+
 export default function ChatInterface() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputMessage, setInputMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [showHelp, setShowHelp] = useState(false);
 
-    // Onboarding states
+    // Registration form states
+    const [showRegistrationForm, setShowRegistrationForm] = useState(true);
+    const [isSubmittingForm, setIsSubmittingForm] = useState(false);
+    const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+    const [currentStep, setCurrentStep] = useState(1);
+    const [registrationData, setRegistrationData] =
+        useState<PatientRegistrationData>({
+            timestamp: "",
+            firstName: "",
+            lastName: "",
+            dateOfBirth: "",
+            gender: "",
+            emailAddress: "",
+            phoneNumber: "",
+            address: "",
+            allergies: "",
+            medicalConditions: "",
+            currentDentalProblems: "",
+            dentalProblemsDetails: "",
+        });
+
+    // Chat states
     const [userData, setUserData] = useState<UserData | null>(null);
-    const [onboardingStep, setOnboardingStep] = useState<
-        "name" | "contact" | "complete"
-    >("name");
-    const [tempName, setTempName] = useState("");
-    const [tempContact, setTempContact] = useState("");
 
     const messageEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const messageContainerRef = useRef<HTMLDivElement>(null);
 
-    // Load user data and messages from localStorage on initial load
+    // Check if user is already registered on component mount
     useEffect(() => {
         const savedUserData = getFromLocalStorage<UserData | null>(
             "kraftodentUserData",
             null
         );
-        const savedMessages = getFromLocalStorage<ChatMessage[]>(
-            "kraftodentChatMessages",
-            []
+        const isRegistered = getFromLocalStorage<boolean>(
+            "kraftodentPatientRegistered",
+            false
         );
 
-        if (savedUserData) {
+        if (savedUserData && isRegistered) {
             setUserData(savedUserData);
-            setOnboardingStep("complete");
+            setShowRegistrationForm(false);
 
-            // If messages exist, use them
+            // Load existing messages or show welcome message
+            const savedMessages = getFromLocalStorage<ChatMessage[]>(
+                "kraftodentChatMessages",
+                []
+            );
+
             if (savedMessages.length > 0) {
                 setMessages(savedMessages);
             } else {
-                // Add personalized welcome message
                 const welcomeMessage: ChatMessage = {
                     id: "welcome",
                     content: `Hello ${savedUserData.name}! Welcome back to Kraftodent. How can I assist you today? I can help you book an appointment or answer any questions about our dental services.`,
@@ -116,16 +209,6 @@ export default function ChatInterface() {
                 setMessages([welcomeMessage]);
                 saveToLocalStorage("kraftodentChatMessages", [welcomeMessage]);
             }
-        } else {
-            // Show onboarding welcome message
-            const onboardingMessage: ChatMessage = {
-                id: "onboarding-welcome",
-                content:
-                    "Welcome to Kraftodent! To get started with our demo, I'll need a few quick details. What's your name?",
-                sender: "bot",
-                timestamp: Date.now(),
-            };
-            setMessages([onboardingMessage]);
         }
     }, []);
 
@@ -137,119 +220,149 @@ export default function ChatInterface() {
         }
     }, [messages]);
 
-    // Handle onboarding input
-    const handleOnboardingInput = (value: string) => {
-        if (onboardingStep === "name") {
-            if (value.trim().length >= 2) {
-                setTempName(value.trim());
+    // Handle registration form input changes
+    const handleRegistrationInputChange = (
+        field: keyof PatientRegistrationData,
+        value: string
+    ) => {
+        setRegistrationData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
 
-                // Add user message
-                const userMessage: ChatMessage = {
-                    id: `user-${Date.now()}`,
-                    content: value,
-                    sender: "user",
-                    timestamp: Date.now(),
-                };
+        // Clear error for this field
+        if (formErrors[field]) {
+            setFormErrors((prev) => {
+                const updated = { ...prev };
+                delete updated[field];
+                return updated;
+            });
+        }
+    };
 
-                // Add bot response
-                const botMessage: ChatMessage = {
-                    id: `bot-${Date.now()}`,
-                    content: `Nice to meet you, ${value.trim()}! Now I'll need either your email address or phone number to proceed.`,
-                    sender: "bot",
-                    timestamp: Date.now() + 1,
-                };
+    // Validate registration form
+    const validateRegistrationForm = (): boolean => {
+        const errors: Record<string, string> = {};
 
-                const updatedMessages = [...messages, userMessage, botMessage];
-                setMessages(updatedMessages);
-                setOnboardingStep("contact");
-                setInputMessage("");
+        if (currentStep === 1) {
+            if (!registrationData.firstName.trim()) {
+                errors.firstName = "First name is required";
             }
-        } else if (onboardingStep === "contact") {
-            const contact = value.trim();
-            let isValid = false;
-            let contactType: "email" | "phone" = "email";
+            if (!registrationData.lastName.trim()) {
+                errors.lastName = "Last name is required";
+            }
+            if (!registrationData.dateOfBirth) {
+                errors.dateOfBirth = "Date of birth is required";
+            }
+            if (!registrationData.gender) {
+                errors.gender = "Gender is required";
+            }
+        }
 
-            if (isValidEmail(contact)) {
-                isValid = true;
-                contactType = "email";
-            } else if (isValidPhone(contact)) {
-                isValid = true;
-                contactType = "phone";
+        if (currentStep === 2) {
+            if (!registrationData.emailAddress.trim()) {
+                errors.emailAddress = "Email address is required";
+            } else if (!isValidEmail(registrationData.emailAddress)) {
+                errors.emailAddress = "Please enter a valid email address";
             }
 
-            if (isValid) {
-                const newUserData: UserData = {
-                    name: tempName,
-                    contact: contact,
-                    contactType: contactType,
-                    isOnboarded: false,
-                };
+            if (!registrationData.phoneNumber.trim()) {
+                errors.phoneNumber = "Phone number is required";
+            } else if (!isValidPhone(registrationData.phoneNumber)) {
+                errors.phoneNumber = "Please enter a valid phone number";
+            }
 
-                setUserData(newUserData);
-                saveToLocalStorage("kraftodentUserData", newUserData);
+            if (!registrationData.address.trim()) {
+                errors.address = "Address is required";
+            }
+        }
 
-                // Add user message
-                const userMessage: ChatMessage = {
-                    id: `user-${Date.now()}`,
-                    content: value,
-                    sender: "user",
-                    timestamp: Date.now(),
-                };
+        if (currentStep === 3) {
+            if (!registrationData.currentDentalProblems) {
+                errors.currentDentalProblems = "Please select an option";
+            }
+        }
 
-                // Add bot response with form link
-                const botMessage: ChatMessage = {
-                    id: `bot-${Date.now()}`,
-                    content: `Perfect! Before we can help you book an appointment, please fill out our quick patient information form. This helps us provide you with the best care possible.
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
 
-📋 Please fill out [this form](https://forms.gle/fJkCV2HKnc23jEdB7).
-
-Once you've submitted the form, just let me know and I'll help you schedule your appointment!`,
-                    sender: "bot",
-                    timestamp: Date.now() + 1,
-                };
-
-                const updatedMessages = [...messages, userMessage, botMessage];
-                setMessages(updatedMessages);
-                saveToLocalStorage("kraftodentChatMessages", updatedMessages);
-
-                setOnboardingStep("complete");
-                setInputMessage("");
+    // Handle next step in registration
+    const handleNextStep = () => {
+        if (validateRegistrationForm()) {
+            if (currentStep < 3) {
+                setCurrentStep(currentStep + 1);
             } else {
-                // Invalid contact - show error message
-                const userMessage: ChatMessage = {
-                    id: `user-${Date.now()}`,
-                    content: value,
-                    sender: "user",
-                    timestamp: Date.now(),
-                };
-
-                const errorMessage: ChatMessage = {
-                    id: `error-${Date.now()}`,
-                    content:
-                        "Please enter a valid email address or phone number. For example:\n• Email: john@example.com\n• Phone: +91 9876543210",
-                    sender: "bot",
-                    timestamp: Date.now() + 1,
-                };
-
-                const updatedMessages = [
-                    ...messages,
-                    userMessage,
-                    errorMessage,
-                ];
-                setMessages(updatedMessages);
-                setInputMessage("");
+                handleSubmitRegistration();
             }
         }
     };
 
+    // Handle previous step in registration
+    const handlePreviousStep = () => {
+        if (currentStep > 1) {
+            setCurrentStep(currentStep - 1);
+        }
+    };
+
+    // Submit registration form directly to Google Sheets
+    const handleSubmitRegistration = async () => {
+        if (!validateRegistrationForm()) return;
+
+        setIsSubmittingForm(true);
+
+        try {
+            const submitData = {
+                ...registrationData,
+                timestamp: new Date().toISOString(),
+            };
+
+            // Submit directly to Google Sheets
+            const success = await submitToGoogleSheets(submitData);
+
+            if (!success) {
+                throw new Error("Failed to submit to Google Sheets");
+            }
+
+            // Create user data for chat
+            const newUserData: UserData = {
+                name: `${registrationData.firstName} ${registrationData.lastName}`,
+                contact: registrationData.emailAddress,
+                contactType: "email",
+                isOnboarded: true,
+            };
+
+            // Save to localStorage
+            setUserData(newUserData);
+            saveToLocalStorage("kraftodentUserData", newUserData);
+            saveToLocalStorage("kraftodentPatientRegistered", true);
+            saveToLocalStorage("kraftodentRegistrationData", submitData);
+
+            // Show chat interface
+            setShowRegistrationForm(false);
+
+            // Add welcome message
+            const welcomeMessage: ChatMessage = {
+                id: "welcome",
+                content: `Hello ${newUserData.name}! Thank you for registering with Kraftodent. How can I assist you today? I can help you book an appointment or answer any questions about our dental services.`,
+                sender: "bot",
+                timestamp: Date.now(),
+            };
+            setMessages([welcomeMessage]);
+            saveToLocalStorage("kraftodentChatMessages", [welcomeMessage]);
+        } catch (error) {
+            console.error("Error submitting registration:", error);
+            setFormErrors({
+                submit: "Failed to submit registration. Please try again.",
+            });
+        } finally {
+            setIsSubmittingForm(false);
+        }
+    };
+
+    // Rest of the chat functionality remains the same...
     const sendMessage = async (content: string) => {
         if (!content.trim()) return;
-
-        // Handle onboarding if not complete
-        if (onboardingStep !== "complete") {
-            handleOnboardingInput(content);
-            return;
-        }
 
         // Create user message
         const userMessage: ChatMessage = {
@@ -330,43 +443,39 @@ Once you've submitted the form, just let me know and I'll help you schedule your
     };
 
     const clearChat = () => {
-        // Clear all data and restart onboarding
+        // Clear all data and restart with registration
         localStorage.removeItem("kraftodentChatMessages");
         localStorage.removeItem("kraftodentUserData");
+        localStorage.removeItem("kraftodentPatientRegistered");
+        localStorage.removeItem("kraftodentRegistrationData");
 
         setUserData(null);
-        setOnboardingStep("name");
-        setTempName("");
-        setTempContact("");
-
-        const onboardingMessage: ChatMessage = {
-            id: "onboarding-welcome",
-            content:
-                "Welcome to Kraftodent! To get started with our demo, I'll need a few quick details. What's your name?",
-            sender: "bot",
-            timestamp: Date.now(),
-        };
-        setMessages([onboardingMessage]);
+        setMessages([]);
+        setShowRegistrationForm(true);
+        setCurrentStep(1);
+        setRegistrationData({
+            timestamp: "",
+            firstName: "",
+            lastName: "",
+            dateOfBirth: "",
+            gender: "",
+            emailAddress: "",
+            phoneNumber: "",
+            address: "",
+            allergies: "",
+            medicalConditions: "",
+            currentDentalProblems: "",
+            dentalProblemsDetails: "",
+        });
     };
 
     const toggleHelp = () => {
         setShowHelp(!showHelp);
     };
 
-    // Get placeholder text based on onboarding step
-    const getPlaceholderText = () => {
-        if (onboardingStep === "name") {
-            return "Enter your name...";
-        } else if (onboardingStep === "contact") {
-            return "Enter your email or phone number...";
-        } else {
-            return "Type your message...";
-        }
-    };
-
-    // Quick responses based on onboarding state
+    // Quick responses for chat
     const getQuickResponses = () => {
-        if (onboardingStep === "complete" && userData) {
+        if (userData) {
             return [
                 {
                     text: "Book appointment",
@@ -382,14 +491,463 @@ Once you've submitted the form, just let me know and I'll help you schedule your
                     action: () => sendMessage("What are your clinic hours?"),
                 },
                 {
-                    text: "Form submitted",
-                    action: () => sendMessage("I have submitted the form"),
+                    text: "Emergency contact",
+                    action: () => sendMessage("I have a dental emergency"),
                 },
             ];
         }
         return [];
     };
 
+    // Render registration form
+    if (showRegistrationForm) {
+        return (
+            <div className="flex flex-col h-[600px] md:h-[700px] bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
+                {/* Registration Header */}
+                <div className="flex items-center justify-between p-4 bg-blue-600 text-white">
+                    <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                            <User size={16} className="text-white" />
+                        </div>
+                        <div>
+                            <h3 className="font-medium">
+                                Patient Registration
+                            </h3>
+                            <p className="text-xs text-blue-100">
+                                Step {currentStep} of 3
+                            </p>
+                        </div>
+                    </div>
+                    <div className="text-sm">Kraftodent Demo</div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="w-full bg-gray-200 h-2">
+                    <div
+                        className="bg-blue-600 h-2 transition-all duration-300"
+                        style={{ width: `${(currentStep / 3) * 100}%` }}
+                    ></div>
+                </div>
+
+                {/* Registration Form */}
+                <div className="flex-grow overflow-y-auto p-6">
+                    <div className="max-w-md mx-auto">
+                        <motion.div
+                            key={currentStep}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {currentStep === 1 && (
+                                <div className="space-y-4">
+                                    <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                                        Personal Information
+                                    </h4>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                First Name *
+                                            </label>
+                                            <Input
+                                                value={
+                                                    registrationData.firstName
+                                                }
+                                                onChange={(e) =>
+                                                    handleRegistrationInputChange(
+                                                        "firstName",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className={
+                                                    formErrors.firstName
+                                                        ? "border-red-500"
+                                                        : ""
+                                                }
+                                                placeholder="John"
+                                            />
+                                            {formErrors.firstName && (
+                                                <p className="text-red-500 text-xs mt-1">
+                                                    {formErrors.firstName}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Last Name *
+                                            </label>
+                                            <Input
+                                                value={
+                                                    registrationData.lastName
+                                                }
+                                                onChange={(e) =>
+                                                    handleRegistrationInputChange(
+                                                        "lastName",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className={
+                                                    formErrors.lastName
+                                                        ? "border-red-500"
+                                                        : ""
+                                                }
+                                                placeholder="Doe"
+                                            />
+                                            {formErrors.lastName && (
+                                                <p className="text-red-500 text-xs mt-1">
+                                                    {formErrors.lastName}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Date of Birth *
+                                        </label>
+                                        <Input
+                                            type="date"
+                                            value={registrationData.dateOfBirth}
+                                            onChange={(e) =>
+                                                handleRegistrationInputChange(
+                                                    "dateOfBirth",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className={
+                                                formErrors.dateOfBirth
+                                                    ? "border-red-500"
+                                                    : ""
+                                            }
+                                        />
+                                        {formErrors.dateOfBirth && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {formErrors.dateOfBirth}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Gender *
+                                        </label>
+                                        <select
+                                            value={registrationData.gender}
+                                            onChange={(e) =>
+                                                handleRegistrationInputChange(
+                                                    "gender",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                                                formErrors.gender
+                                                    ? "border-red-500"
+                                                    : "border-gray-300"
+                                            }`}
+                                        >
+                                            <option value="">
+                                                Select Gender
+                                            </option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">
+                                                Female
+                                            </option>
+                                            <option value="Other">Other</option>
+                                            <option value="Prefer not to say">
+                                                Prefer not to say
+                                            </option>
+                                        </select>
+                                        {formErrors.gender && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {formErrors.gender}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {currentStep === 2 && (
+                                <div className="space-y-4">
+                                    <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                                        Contact Information
+                                    </h4>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Email Address *
+                                        </label>
+                                        <Input
+                                            type="email"
+                                            value={
+                                                registrationData.emailAddress
+                                            }
+                                            onChange={(e) =>
+                                                handleRegistrationInputChange(
+                                                    "emailAddress",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className={
+                                                formErrors.emailAddress
+                                                    ? "border-red-500"
+                                                    : ""
+                                            }
+                                            placeholder="john.doe@example.com"
+                                        />
+                                        {formErrors.emailAddress && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {formErrors.emailAddress}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Phone Number *
+                                        </label>
+                                        <Input
+                                            type="tel"
+                                            value={registrationData.phoneNumber}
+                                            onChange={(e) =>
+                                                handleRegistrationInputChange(
+                                                    "phoneNumber",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className={
+                                                formErrors.phoneNumber
+                                                    ? "border-red-500"
+                                                    : ""
+                                            }
+                                            placeholder="+91 9876543210"
+                                        />
+                                        {formErrors.phoneNumber && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {formErrors.phoneNumber}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Address *
+                                        </label>
+                                        <textarea
+                                            value={registrationData.address}
+                                            onChange={(e) =>
+                                                handleRegistrationInputChange(
+                                                    "address",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                                                formErrors.address
+                                                    ? "border-red-500"
+                                                    : "border-gray-300"
+                                            }`}
+                                            rows={3}
+                                            placeholder="Your complete address"
+                                        />
+                                        {formErrors.address && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {formErrors.address}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {currentStep === 3 && (
+                                <div className="space-y-4">
+                                    <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                                        Medical Information
+                                    </h4>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Do you have any allergies? If "yes",
+                                            please list all your allergies:
+                                        </label>
+                                        <textarea
+                                            value={registrationData.allergies}
+                                            onChange={(e) =>
+                                                handleRegistrationInputChange(
+                                                    "allergies",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            rows={2}
+                                            placeholder="List any allergies or type 'None'"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Have you ever had any of the
+                                            following conditions?
+                                        </label>
+                                        <textarea
+                                            value={
+                                                registrationData.medicalConditions
+                                            }
+                                            onChange={(e) =>
+                                                handleRegistrationInputChange(
+                                                    "medicalConditions",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            rows={2}
+                                            placeholder="List any medical conditions or type 'None'"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Are you currently experiencing any
+                                            dental problems or pain? *
+                                        </label>
+                                        <div className="space-y-2">
+                                            <label className="flex items-center">
+                                                <input
+                                                    type="radio"
+                                                    name="dentalProblems"
+                                                    value="Yes"
+                                                    checked={
+                                                        registrationData.currentDentalProblems ===
+                                                        "Yes"
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleRegistrationInputChange(
+                                                            "currentDentalProblems",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="mr-2"
+                                                />
+                                                Yes
+                                            </label>
+                                            <label className="flex items-center">
+                                                <input
+                                                    type="radio"
+                                                    name="dentalProblems"
+                                                    value="No"
+                                                    checked={
+                                                        registrationData.currentDentalProblems ===
+                                                        "No"
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleRegistrationInputChange(
+                                                            "currentDentalProblems",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="mr-2"
+                                                />
+                                                No
+                                            </label>
+                                        </div>
+                                        {formErrors.currentDentalProblems && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {
+                                                    formErrors.currentDentalProblems
+                                                }
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    {registrationData.currentDentalProblems ===
+                                        "Yes" && (
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                If "yes", state them below:
+                                            </label>
+                                            <textarea
+                                                value={
+                                                    registrationData.dentalProblemsDetails
+                                                }
+                                                onChange={(e) =>
+                                                    handleRegistrationInputChange(
+                                                        "dentalProblemsDetails",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                rows={3}
+                                                placeholder="Please describe your dental problems in detail"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </motion.div>
+
+                        {formErrors.submit && (
+                            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <div className="flex items-center">
+                                    <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                                    <p className="text-red-700 text-sm">
+                                        {formErrors.submit}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Form Navigation */}
+                <div className="p-4 bg-gray-50 border-t">
+                    <div className="max-w-md mx-auto flex justify-between">
+                        {currentStep > 1 && (
+                            <Button
+                                variant="outline"
+                                onClick={handlePreviousStep}
+                                disabled={isSubmittingForm}
+                            >
+                                Previous
+                            </Button>
+                        )}
+
+                        <div className={currentStep === 1 ? "ml-auto" : ""}>
+                            <Button
+                                onClick={handleNextStep}
+                                disabled={isSubmittingForm}
+                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                                {isSubmittingForm ? (
+                                    <>
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                        Submitting...
+                                    </>
+                                ) : currentStep === 3 ? (
+                                    <>
+                                        Complete Registration
+                                        <CheckCircle
+                                            size={16}
+                                            className="ml-2"
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        Next
+                                        <ArrowRight
+                                            size={16}
+                                            className="ml-2"
+                                        />
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Render chat interface (existing chat code)
     return (
         <div className="flex flex-col h-[600px] md:h-[700px] bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
             {/* Chat Header */}
@@ -423,7 +981,7 @@ Once you've submitted the form, just let me know and I'll help you schedule your
                         size="sm"
                         onClick={clearChat}
                         className="text-white hover:bg-blue-700 h-8 w-8 p-0"
-                        aria-label="Clear chat"
+                        aria-label="Clear chat and restart registration"
                     >
                         <RefreshCw size={16} />
                     </Button>
@@ -455,17 +1013,9 @@ Once you've submitted the form, just let me know and I'll help you schedule your
                             </div>
                         </div>
                         <div className="flex items-center space-x-1">
-                            <div
-                                className={`w-2 h-2 rounded-full ${
-                                    userData.isOnboarded
-                                        ? "bg-green-500"
-                                        : "bg-yellow-500"
-                                }`}
-                            ></div>
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
                             <span className="text-xs text-blue-700">
-                                {userData.isOnboarded
-                                    ? "Ready"
-                                    : "Pending form"}
+                                Registered
                             </span>
                         </div>
                     </div>
@@ -491,9 +1041,9 @@ Once you've submitted the form, just let me know and I'll help you schedule your
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <div>
-                                    <strong>✓ Patient onboarding</strong>
+                                    <strong>✓ Patient registration</strong>
                                     <p className="text-xs">
-                                        Collect basic information
+                                        Complete medical intake form
                                     </p>
                                 </div>
                                 <div>
@@ -625,7 +1175,7 @@ Once you've submitted the form, just let me know and I'll help you schedule your
                         ref={inputRef}
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
-                        placeholder={getPlaceholderText()}
+                        placeholder="Type your message..."
                         className="bg-white border-gray-200"
                         disabled={isLoading}
                     />
