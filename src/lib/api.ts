@@ -7,48 +7,32 @@ import {
 } from "@/types/chat";
 
 /**
- * Submit patient registration data to Google Sheets via Google Apps Script
- * This approach is more secure and doesn't require OAuth for write operations
+ * Submit patient registration data to N8N webhook for Google Sheets integration
  */
 export async function submitToGoogleSheets(
     data: PatientRegistrationData
 ): Promise<boolean> {
     try {
-        // For now, we'll create a Google Apps Script Web App endpoint
-        // This is the recommended approach for writing to Google Sheets from web apps
-        const GOOGLE_APPS_SCRIPT_URL =
-            process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL;
+        const GOOGLE_SHEETS_WEBHOOK_URL =
+            "https://n8n.srv850966.hstgr.cloud/webhook/58a3be3c-82ce-4cb0-9bfb-adb58f5facde";
 
-        if (!GOOGLE_APPS_SCRIPT_URL) {
-            console.error("Google Apps Script URL not configured");
-            // Fall back to console logging for demo purposes
-            console.log(
-                "Patient Registration Data (would be sent to Google Sheets):",
-                data
-            );
-            return true; // Return true for demo to allow flow to continue
-        }
-
-        // Prepare the data payload
+        // Prepare the data payload for N8N webhook
         const payload = {
-            action: "addPatient",
-            data: {
-                timestamp: data.timestamp,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                dateOfBirth: data.dateOfBirth,
-                gender: data.gender,
-                emailAddress: data.emailAddress,
-                phoneNumber: data.phoneNumber,
-                address: data.address,
-                allergies: data.allergies || "None",
-                medicalConditions: data.medicalConditions || "None",
-                currentDentalProblems: data.currentDentalProblems || "No",
-                dentalProblemsDetails: data.dentalProblemsDetails || "",
-            },
+            timestamp: data.timestamp,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            dateOfBirth: data.dateOfBirth,
+            gender: data.gender,
+            emailAddress: data.emailAddress,
+            phoneNumber: data.phoneNumber,
+            address: data.address,
+            allergies: data.allergies || "None",
+            medicalConditions: data.medicalConditions || "None",
+            currentDentalProblems: data.currentDentalProblems || "No",
+            dentalProblemsDetails: data.dentalProblemsDetails || "",
         };
 
-        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+        const response = await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -57,25 +41,13 @@ export async function submitToGoogleSheets(
         });
 
         if (!response.ok) {
-            throw new Error(
-                `Google Apps Script request failed: ${response.status}`
-            );
+            throw new Error(`N8N webhook request failed: ${response.status}`);
         }
 
-        const result = await response.json();
-
-        if (result.success) {
-            console.log(
-                "Successfully submitted to Google Sheets via Apps Script"
-            );
-            return true;
-        } else {
-            throw new Error(
-                result.error || "Unknown error from Google Apps Script"
-            );
-        }
+        console.log("Successfully submitted to Google Sheets via N8N webhook");
+        return true;
     } catch (error) {
-        console.error("Error submitting to Google Sheets:", error);
+        console.error("Error submitting to N8N webhook:", error);
 
         // For demo purposes, log the data and return true to continue the flow
         console.log("Patient Registration Data (logging due to API error):", {
@@ -88,56 +60,6 @@ export async function submitToGoogleSheets(
         // In a real application, you might want to store this in localStorage
         // and retry later, or send to an alternative endpoint
         return true; // Allow demo to continue
-    }
-}
-
-/**
- * Alternative method using Google Forms as a fallback
- * This can be used if Google Apps Script isn't available
- */
-export async function submitToGoogleForm(
-    data: PatientRegistrationData
-): Promise<boolean> {
-    try {
-        const GOOGLE_FORM_URL = process.env.NEXT_PUBLIC_GOOGLE_FORM_URL;
-
-        if (!GOOGLE_FORM_URL) {
-            console.log("Google Form URL not configured");
-            return false;
-        }
-
-        // Google Forms expects form data, not JSON
-        const formData = new FormData();
-
-        // You'll need to map these to your actual Google Form field names
-        // These are example field names - replace with your actual form field IDs
-        formData.append(
-            "entry.123456789",
-            `${data.firstName} ${data.lastName}`
-        );
-        formData.append("entry.987654321", data.emailAddress);
-        formData.append("entry.456789123", data.phoneNumber);
-        formData.append("entry.789123456", data.dateOfBirth);
-        formData.append("entry.321654987", data.gender);
-        formData.append("entry.654987321", data.address);
-        formData.append("entry.147258369", data.allergies || "None");
-        formData.append("entry.258369147", data.medicalConditions || "None");
-        formData.append("entry.369147258", data.currentDentalProblems || "No");
-        formData.append("entry.741852963", data.dentalProblemsDetails || "");
-
-        const response = await fetch(GOOGLE_FORM_URL, {
-            method: "POST",
-            body: formData,
-            mode: "no-cors", // Required for Google Forms
-        });
-
-        // Note: no-cors mode means we can't read the response
-        // We'll assume success if no error is thrown
-        console.log("Submitted to Google Form");
-        return true;
-    } catch (error) {
-        console.error("Error submitting to Google Form:", error);
-        return false;
     }
 }
 

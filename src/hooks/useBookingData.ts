@@ -16,6 +16,7 @@ interface UseBookingDataReturn {
     bookings: BookingData[];
     todaysBookings: BookingData[];
     upcomingBookings: BookingData[];
+    pastBookings: BookingData[];
     stats: BookingStats;
     loading: boolean;
     error: string | null;
@@ -88,7 +89,6 @@ export function useBookingData(): UseBookingDataReturn {
             return [];
         }
     }, [bookings])();
-
     /**
      * Process bookings to get upcoming appointments (next 7 days)
      */
@@ -99,6 +99,20 @@ export function useBookingData(): UseBookingDataReturn {
             return sheetsService.getUpcomingAppointments(bookings);
         } catch (err) {
             console.error("Error processing upcoming bookings:", err);
+            return [];
+        }
+    }, [bookings])();
+
+    /**
+     * Process bookings to get past appointments
+     */
+    const pastBookings = useCallback((): BookingData[] => {
+        if (!bookings.length) return [];
+
+        try {
+            return sheetsService.getPastAppointments(bookings);
+        } catch (err) {
+            console.error("Error processing past bookings:", err);
             return [];
         }
     }, [bookings])();
@@ -235,6 +249,7 @@ export function useBookingData(): UseBookingDataReturn {
         bookings,
         todaysBookings,
         upcomingBookings,
+        pastBookings,
         stats,
         loading,
         error,
@@ -305,11 +320,14 @@ export function useBookingDataOnce(): UseBookingDataReturn {
                   confirmedAppointments: 0,
                   pendingAppointments: 0,
               };
+    const pastBookings =
+        bookings.length > 0 ? sheetsService.getPastAppointments(bookings) : [];
 
     return {
         bookings,
         todaysBookings,
         upcomingBookings,
+        pastBookings,
         stats,
         loading,
         error,
@@ -345,6 +363,7 @@ export function useCachedBookingData(): Omit<UseBookingDataReturn, "refetch"> {
         bookings,
         todaysBookings,
         upcomingBookings,
+        pastBookings: [],
         stats,
         loading,
         error,

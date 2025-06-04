@@ -85,8 +85,9 @@ const StatCard = ({
                         <ArrowDown size={14} className="text-red-500 mr-1" />
                     )}
                     <span
-                        className={`text-xs ${positive ? "text-green-500" : "text-red-500"
-                            }`}
+                        className={`text-xs ${
+                            positive ? "text-green-500" : "text-red-500"
+                        }`}
                     >
                         {change} from yesterday
                     </span>
@@ -170,13 +171,12 @@ const AppointmentRow = ({ booking, index }: AppointmentRowProps) => {
 export default function DashboardInterface() {
     const [activeTab, setActiveTab] = useState("today");
     const [searchQuery, setSearchQuery] = useState("");
-    const [isMounted, setIsMounted] = useState(false);
-
-    // Use the booking data hook
+    const [isMounted, setIsMounted] = useState(false); // Use the booking data hook
     const {
         bookings,
         todaysBookings,
         upcomingBookings,
+        pastBookings,
         stats,
         loading,
         error,
@@ -234,10 +234,35 @@ export default function DashboardInterface() {
             icon: <MessageSquare size={18} />,
         },
     ];
-
     const handleRefresh = async () => {
         await refetch();
     };
+
+    // Get appointment lists based on active tab
+    const getFilteredAppointments = () => {
+        switch (activeTab) {
+            case "past":
+                return pastBookings;
+            case "today":
+                return todaysBookings;
+            case "upcoming":
+                return upcomingBookings;
+            default:
+                return todaysBookings;
+        }
+    };
+
+    const filteredAppointmentsByTab = getFilteredAppointments().filter(
+        (booking) =>
+            booking.Patient_Name?.toLowerCase().includes(
+                searchQuery.toLowerCase()
+            ) ||
+            booking.Service_Type?.toLowerCase().includes(
+                searchQuery.toLowerCase()
+            ) ||
+            booking.Phone?.includes(searchQuery) ||
+            booking.Email?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <div className="bg-gray-100 rounded-lg overflow-x-auto shadow-md border border-gray-200 h-[700px] flex flex-col">
@@ -268,22 +293,13 @@ export default function DashboardInterface() {
                                 className={loading ? "animate-spin" : ""}
                             />
                         </Button>
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                        >
+                        <Button size="sm" variant="ghost">
                             <Bell size={18} />
                         </Button>
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                        >
+                        <Button size="sm" variant="ghost">
                             <Settings size={18} />
                         </Button>
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                        >
+                        <Button size="sm" variant="ghost">
                             <HelpCircle size={18} />
                         </Button>
                         <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
@@ -457,14 +473,17 @@ export default function DashboardInterface() {
                             className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 lg:col-span-2"
                         >
                             <div className="flex justify-between items-center mb-4">
+                                {" "}
                                 <h3 className="font-medium text-gray-800 text-sm sm:text-base">
-                                    {activeTab === "today"
+                                    {activeTab === "past"
+                                        ? "Past"
+                                        : activeTab === "today"
                                         ? "Today's"
                                         : "Upcoming"}{" "}
                                     Appointments
                                     {!loading && (
                                         <span className="ml-2 text-sm text-gray-500">
-                                            ({filteredAppointments.length})
+                                            ({filteredAppointmentsByTab.length})
                                         </span>
                                     )}
                                 </h3>
@@ -485,21 +504,21 @@ export default function DashboardInterface() {
                                     </div>
                                     <div className="flex flex-col md:flex-row border rounded-md overflow-hidden">
                                         <button
-                                            className={`px-3 py-1 text-xs ${activeTab === "past"
+                                            className={`px-3 py-1 text-xs ${
+                                                activeTab === "past"
                                                     ? "bg-blue-600 text-white"
                                                     : "bg-white text-gray-500"
-                                                }`}
-                                            onClick={() =>
-                                                setActiveTab("past")
-                                            }
+                                            }`}
+                                            onClick={() => setActiveTab("past")}
                                         >
-                                            Past ({todaysBookings.length})
+                                            Past ({pastBookings.length})
                                         </button>
                                         <button
-                                            className={`px-3 py-1 text-xs ${activeTab === "today"
+                                            className={`px-3 py-1 text-xs ${
+                                                activeTab === "today"
                                                     ? "bg-blue-600 text-white"
                                                     : "bg-white text-gray-500"
-                                                }`}
+                                            }`}
                                             onClick={() =>
                                                 setActiveTab("today")
                                             }
@@ -507,10 +526,11 @@ export default function DashboardInterface() {
                                             Today ({todaysBookings.length})
                                         </button>
                                         <button
-                                            className={`px-3 py-1 text-xs ${activeTab === "upcoming"
+                                            className={`px-3 py-1 text-xs ${
+                                                activeTab === "upcoming"
                                                     ? "bg-blue-600 text-white"
                                                     : "bg-white text-gray-500"
-                                                }`}
+                                            }`}
                                             onClick={() =>
                                                 setActiveTab("upcoming")
                                             }
@@ -520,7 +540,6 @@ export default function DashboardInterface() {
                                     </div>
                                 </div>
                             </div>
-
                             {/* Appointment List */}
                             <div className="overflow-x-auto">
                                 {loading ? (
@@ -537,9 +556,9 @@ export default function DashboardInterface() {
                                                 </div>
                                                 <div className="h-6 bg-gray-200 rounded w-16"></div>
                                             </div>
-                                        ))}
+                                        ))}{" "}
                                     </div>
-                                ) : filteredAppointments.length > 0 ? (
+                                ) : filteredAppointmentsByTab.length > 0 ? (
                                     <table className="min-w-full">
                                         <thead>
                                             <tr className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -561,7 +580,7 @@ export default function DashboardInterface() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200">
-                                            {filteredAppointments.map(
+                                            {filteredAppointmentsByTab.map(
                                                 (booking, index) => (
                                                     <AppointmentRow
                                                         key={`${booking.Patient_Name}-${booking.Date}-${booking.Time}-${index}`}
@@ -581,10 +600,14 @@ export default function DashboardInterface() {
                                         <p className="text-gray-500">
                                             {searchQuery
                                                 ? `No appointments match "${searchQuery}"`
-                                                : `No ${activeTab === "today"
-                                                    ? "appointments today"
-                                                    : "upcoming appointments"
-                                                }`}
+                                                : `No ${
+                                                      activeTab === "past"
+                                                          ? "past appointments"
+                                                          : activeTab ===
+                                                            "today"
+                                                          ? "appointments today"
+                                                          : "upcoming appointments"
+                                                  }`}
                                         </p>
                                         {searchQuery && (
                                             <Button
@@ -600,16 +623,16 @@ export default function DashboardInterface() {
                                         )}
                                     </div>
                                 )}
-                            </div>
-
+                            </div>{" "}
                             {/* More Link */}
-                            {!loading && filteredAppointments.length > 0 && (
-                                <div className="mt-4 text-center">
-                                    <button className="text-blue-600 text-sm hover:underline">
-                                        View all appointments →
-                                    </button>
-                                </div>
-                            )}
+                            {!loading &&
+                                filteredAppointmentsByTab.length > 0 && (
+                                    <div className="mt-4 text-center">
+                                        <button className="text-blue-600 text-sm hover:underline">
+                                            View all appointments →
+                                        </button>
+                                    </div>
+                                )}
                         </motion.div>
 
                         {/* Data Source Info */}
@@ -634,10 +657,11 @@ export default function DashboardInterface() {
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <div
-                                        className={`w-2 h-2 rounded-full ${error
+                                        className={`w-2 h-2 rounded-full ${
+                                            error
                                                 ? "bg-red-500"
                                                 : "bg-green-500"
-                                            }`}
+                                        }`}
                                     ></div>
                                     <span className="text-xs text-blue-700">
                                         {error ? "Disconnected" : "Connected"}

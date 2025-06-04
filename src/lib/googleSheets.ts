@@ -78,7 +78,6 @@ class GoogleSheetsService {
             return bookingDate === today;
         });
     }
-
     /**
      * Get upcoming appointments (next 7 days)
      */
@@ -91,6 +90,26 @@ class GoogleSheetsService {
             const bookingDate = new Date(this.parseDate(booking.Date));
             return bookingDate > today && bookingDate <= nextWeek;
         });
+    }
+
+    /**
+     * Get past appointments (before today)
+     */
+    getPastAppointments(bookings: BookingData[]): BookingData[] {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return bookings
+            .filter((booking) => {
+                const bookingDate = new Date(this.parseDate(booking.Date));
+                return bookingDate < today;
+            })
+            .sort((a, b) => {
+                // Sort by date descending (most recent first)
+                const dateA = new Date(this.parseDate(a.Date));
+                const dateB = new Date(this.parseDate(b.Date));
+                return dateB.getTime() - dateA.getTime();
+            });
     }
 
     /**
