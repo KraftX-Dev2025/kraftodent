@@ -1,5 +1,3 @@
-// src/components/chat/PatientRegistrationForm.tsx
-
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -7,10 +5,7 @@ import {
     ChevronRight,
     User,
     Mail,
-    Phone,
-    MapPin,
     Heart,
-    AlertTriangle,
     CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,9 +13,7 @@ import { Input } from "@/components/ui/input";
 import {
     PatientRegistrationFormProps,
     PatientRegistrationData,
-    ValidationErrors,
 } from "@/types/chat";
-import { validateRegistrationStep } from "@/lib/validation";
 import { submitToGoogleSheets } from "@/lib/api";
 
 const initialFormData: PatientRegistrationData = {
@@ -40,12 +33,10 @@ const initialFormData: PatientRegistrationData = {
 
 export default function PatientRegistrationForm({
     onRegistrationComplete,
-    onError,
 }: PatientRegistrationFormProps) {
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] =
         useState<PatientRegistrationData>(initialFormData);
-    const [formErrors, setFormErrors] = useState<ValidationErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const totalSteps = 3;
@@ -55,67 +46,37 @@ export default function PatientRegistrationForm({
         value: string
     ) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
-
-        // Clear error for this field when user types
-        if (formErrors[field]) {
-            setFormErrors((prev) => {
-                const updated = { ...prev };
-                delete updated[field];
-                return updated;
-            });
-        }
-    };
-
-    const validateStep = (step: number): boolean => {
-        const errors = validateRegistrationStep(step, formData);
-        setFormErrors(errors);
-        return Object.keys(errors).length === 0;
     };
 
     const handleNextStep = () => {
-        if (validateStep(currentStep)) {
-            setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
-        }
+        setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
     };
 
     const handlePreviousStep = () => {
         setCurrentStep((prev) => Math.max(prev - 1, 1));
-        setFormErrors({});
     };
 
     const handleSubmit = async () => {
-        if (!validateStep(currentStep)) return;
-
         setIsSubmitting(true);
 
-        try {
-            const dataToSubmit = {
-                ...formData,
-                timestamp: new Date().toISOString(),
-            };
+        const dataToSubmit = {
+            ...formData,
+            timestamp: new Date().toISOString(),
+        };
 
-            const success = await submitToGoogleSheets(dataToSubmit);
+        await submitToGoogleSheets(dataToSubmit);
 
-            if (success) {
-                const userData = {
-                    name: `${formData.firstName} ${formData.lastName}`,
-                    contact: formData.emailAddress || formData.phoneNumber,
-                    contactType: formData.emailAddress
-                        ? ("email" as const)
-                        : ("phone" as const),
-                    isOnboarded: true,
-                };
+        const userData = {
+            name: `${formData.firstName} ${formData.lastName}`,
+            contact: formData.emailAddress || formData.phoneNumber,
+            contactType: formData.emailAddress
+                ? ("email" as const)
+                : ("phone" as const),
+            isOnboarded: true,
+        };
 
-                onRegistrationComplete(userData);
-            } else {
-                onError("Failed to register. Please try again.");
-            }
-        } catch (error) {
-            console.error("Registration error:", error);
-            onError("An error occurred during registration. Please try again.");
-        } finally {
-            setIsSubmitting(false);
-        }
+        onRegistrationComplete(userData);
+        setIsSubmitting(false);
     };
 
     const renderStepContent = () => {
@@ -154,19 +115,8 @@ export default function PatientRegistrationForm({
                                         )
                                     }
                                     placeholder="Enter your first name"
-                                    className={
-                                        formErrors.firstName
-                                            ? "border-red-500"
-                                            : ""
-                                    }
                                 />
-                                {formErrors.firstName && (
-                                    <p className="text-red-500 text-xs mt-1">
-                                        {formErrors.firstName}
-                                    </p>
-                                )}
                             </div>
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Last Name *
@@ -180,17 +130,7 @@ export default function PatientRegistrationForm({
                                         )
                                     }
                                     placeholder="Enter your last name"
-                                    className={
-                                        formErrors.lastName
-                                            ? "border-red-500"
-                                            : ""
-                                    }
                                 />
-                                {formErrors.lastName && (
-                                    <p className="text-red-500 text-xs mt-1">
-                                        {formErrors.lastName}
-                                    </p>
-                                )}
                             </div>
                         </div>
 
@@ -207,17 +147,7 @@ export default function PatientRegistrationForm({
                                         e.target.value
                                     )
                                 }
-                                className={
-                                    formErrors.dateOfBirth
-                                        ? "border-red-500"
-                                        : ""
-                                }
                             />
-                            {formErrors.dateOfBirth && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.dateOfBirth}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -229,13 +159,9 @@ export default function PatientRegistrationForm({
                                 onChange={(e) =>
                                     handleInputChange("gender", e.target.value)
                                 }
-                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                    formErrors.gender
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                }`}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                                <option value="">Select gender</option>
+                                <option value="">Select your gender</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                                 <option value="other">Other</option>
@@ -243,11 +169,6 @@ export default function PatientRegistrationForm({
                                     Prefer not to say
                                 </option>
                             </select>
-                            {formErrors.gender && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.gender}
-                                </p>
-                            )}
                         </div>
                     </motion.div>
                 );
@@ -261,8 +182,8 @@ export default function PatientRegistrationForm({
                         className="space-y-4"
                     >
                         <div className="text-center mb-6">
-                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <Mail className="w-8 h-8 text-green-600" />
+                            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <Mail className="w-8 h-8 text-blue-600" />
                             </div>
                             <h3 className="text-lg font-semibold text-gray-800">
                                 Contact Information
@@ -286,17 +207,7 @@ export default function PatientRegistrationForm({
                                     )
                                 }
                                 placeholder="Enter your email address"
-                                className={
-                                    formErrors.emailAddress
-                                        ? "border-red-500"
-                                        : ""
-                                }
                             />
-                            {formErrors.emailAddress && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.emailAddress}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -313,41 +224,20 @@ export default function PatientRegistrationForm({
                                     )
                                 }
                                 placeholder="Enter your phone number"
-                                className={
-                                    formErrors.phoneNumber
-                                        ? "border-red-500"
-                                        : ""
-                                }
                             />
-                            {formErrors.phoneNumber && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.phoneNumber}
-                                </p>
-                            )}
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Address *
                             </label>
-                            <textarea
+                            <Input
                                 value={formData.address}
                                 onChange={(e) =>
                                     handleInputChange("address", e.target.value)
                                 }
-                                placeholder="Enter your complete address"
-                                rows={3}
-                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
-                                    formErrors.address
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                }`}
+                                placeholder="Enter your full address"
                             />
-                            {formErrors.address && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.address}
-                                </p>
-                            )}
                         </div>
                     </motion.div>
                 );
@@ -361,8 +251,8 @@ export default function PatientRegistrationForm({
                         className="space-y-4"
                     >
                         <div className="text-center mb-6">
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <Heart className="w-8 h-8 text-red-600" />
+                            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <Heart className="w-8 h-8 text-blue-600" />
                             </div>
                             <h3 className="text-lg font-semibold text-gray-800">
                                 Medical Information
@@ -374,10 +264,9 @@ export default function PatientRegistrationForm({
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Do you have any allergies? If "yes", please list
-                                all your allergies:
+                                Allergies
                             </label>
-                            <textarea
+                            <Input
                                 value={formData.allergies}
                                 onChange={(e) =>
                                     handleInputChange(
@@ -385,18 +274,15 @@ export default function PatientRegistrationForm({
                                         e.target.value
                                     )
                                 }
-                                placeholder="Please list any allergies (e.g., medications, materials, foods) or write 'None'"
-                                rows={3}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                placeholder="List any allergies (optional)"
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Have you ever had any of the following
-                                conditions?
+                                Medical Conditions
                             </label>
-                            <textarea
+                            <Input
                                 value={formData.medicalConditions}
                                 onChange={(e) =>
                                     handleInputChange(
@@ -404,16 +290,13 @@ export default function PatientRegistrationForm({
                                         e.target.value
                                     )
                                 }
-                                placeholder="Please list any medical conditions (e.g., diabetes, heart disease, high blood pressure) or write 'None'"
-                                rows={3}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                placeholder="List any medical conditions (optional)"
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Are you currently experiencing any dental
-                                problems or pain?
+                                Do you have any current dental problems? *
                             </label>
                             <select
                                 value={formData.currentDentalProblems}
@@ -432,11 +315,7 @@ export default function PatientRegistrationForm({
                         </div>
 
                         {formData.currentDentalProblems === "yes" && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                transition={{ duration: 0.3 }}
-                            >
+                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     If "yes", state them below: *
                                 </label>
@@ -448,20 +327,10 @@ export default function PatientRegistrationForm({
                                             e.target.value
                                         )
                                     }
-                                    placeholder="Please describe your current dental problems or pain"
-                                    rows={3}
-                                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
-                                        formErrors.dentalProblemsDetails
-                                            ? "border-red-500"
-                                            : "border-gray-300"
-                                    }`}
+                                    placeholder="Describe your dental problems..."
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px]"
                                 />
-                                {formErrors.dentalProblemsDetails && (
-                                    <p className="text-red-500 text-xs mt-1">
-                                        {formErrors.dentalProblemsDetails}
-                                    </p>
-                                )}
-                            </motion.div>
+                            </div>
                         )}
                     </motion.div>
                 );
@@ -472,21 +341,20 @@ export default function PatientRegistrationForm({
     };
 
     return (
-        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
-            {/* Progress Bar */}
-            <div className="mb-8">
-                <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-600">
+        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg border border-gray-200">
+            <div className="p-6 border-b border-gray-200">
+                <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">
                         Step {currentStep} of {totalSteps}
                     </span>
                     <span className="text-sm text-gray-500">
-                        {Math.round((currentStep / totalSteps) * 100)}% Complete
+                        {Math.round((currentStep / totalSteps) * 100)}% complete
                     </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                     <motion.div
                         className="bg-blue-600 h-2 rounded-full"
-                        initial={{ width: "0%" }}
+                        initial={{ width: 0 }}
                         animate={{
                             width: `${(currentStep / totalSteps) * 100}%`,
                         }}
@@ -495,15 +363,17 @@ export default function PatientRegistrationForm({
                 </div>
             </div>
 
-            {/* Step Content */}
-            <AnimatePresence mode="wait">{renderStepContent()}</AnimatePresence>
+            <div className="p-6">
+                <AnimatePresence mode="wait">
+                    {renderStepContent()}
+                </AnimatePresence>
+            </div>
 
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-8">
+            <div className="flex justify-between p-6 border-t border-gray-200">
                 <Button
+                    variant="outline"
                     onClick={handlePreviousStep}
                     disabled={currentStep === 1}
-                    variant="outline"
                     className="flex items-center"
                 >
                     <ChevronLeft size={16} className="mr-1" />
@@ -513,7 +383,7 @@ export default function PatientRegistrationForm({
                 {currentStep < totalSteps ? (
                     <Button
                         onClick={handleNextStep}
-                        className="bg-blue-600 hover:bg-blue-700 text-white flex items-center"
+                        className="flex items-center bg-blue-600 hover:bg-blue-700"
                     >
                         Next
                         <ChevronRight size={16} className="ml-1" />
@@ -522,7 +392,7 @@ export default function PatientRegistrationForm({
                     <Button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="bg-green-600 hover:bg-green-700 text-white flex items-center"
+                        className="flex items-center bg-green-600 hover:bg-green-700"
                     >
                         {isSubmitting ? (
                             <>
@@ -531,20 +401,12 @@ export default function PatientRegistrationForm({
                             </>
                         ) : (
                             <>
-                                <CheckCircle size={16} className="mr-1" />
+                                <CheckCircle size={16} className="mr-2" />
                                 Complete Registration
                             </>
                         )}
                     </Button>
                 )}
-            </div>
-
-            {/* Helper Text */}
-            <div className="mt-4 text-center">
-                <p className="text-xs text-gray-500">
-                    Your information is secure and will only be used for
-                    appointment scheduling and dental care.
-                </p>
             </div>
         </div>
     );

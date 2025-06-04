@@ -15,8 +15,6 @@ import {
 
 export default function ChatInterface() {
     const [userData, setUserData] = useState<UserData | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [showRegistration, setShowRegistration] = useState(false);
 
     useEffect(() => {
@@ -24,121 +22,37 @@ export default function ChatInterface() {
     }, []);
 
     const checkRegistrationStatus = () => {
-        try {
-            const savedUserData = getFromLocalStorage<UserData | null>(
-                LOCAL_STORAGE_KEYS.USER_DATA,
-                null
-            );
-            const registrationStatus = getFromLocalStorage<boolean>(
-                LOCAL_STORAGE_KEYS.REGISTRATION_STATUS,
-                false
-            );
+        const savedUserData = getFromLocalStorage<UserData | null>(
+            LOCAL_STORAGE_KEYS.USER_DATA,
+            null
+        );
+        const registrationStatus = getFromLocalStorage<boolean>(
+            LOCAL_STORAGE_KEYS.REGISTRATION_STATUS,
+            false
+        );
 
-            if (savedUserData && registrationStatus) {
-                setUserData(savedUserData);
-                setShowRegistration(false);
-            } else {
-                setShowRegistration(true);
-            }
-        } catch (error) {
-            console.error("Error checking registration status:", error);
-            setError("Failed to load user data");
+        if (savedUserData && registrationStatus) {
+            setUserData(savedUserData);
+            setShowRegistration(false);
+        } else {
             setShowRegistration(true);
-        } finally {
-            setIsLoading(false);
         }
     };
 
     const handleRegistrationComplete = (newUserData: UserData) => {
-        try {
-            setUserData(newUserData);
-            saveToLocalStorage(LOCAL_STORAGE_KEYS.USER_DATA, newUserData);
-            saveToLocalStorage(LOCAL_STORAGE_KEYS.REGISTRATION_STATUS, true);
-            setShowRegistration(false);
-            setError(null);
-        } catch (error) {
-            console.error("Error saving user data:", error);
-            setError("Failed to save registration data");
-        }
-    };
-
-    const handleRegistrationError = (errorMessage: string) => {
-        setError(errorMessage);
+        setUserData(newUserData);
+        saveToLocalStorage(LOCAL_STORAGE_KEYS.USER_DATA, newUserData);
+        saveToLocalStorage(LOCAL_STORAGE_KEYS.REGISTRATION_STATUS, true);
+        setShowRegistration(false);
     };
 
     const handleClearSession = () => {
-        try {
-            removeFromLocalStorage(LOCAL_STORAGE_KEYS.USER_DATA);
-            removeFromLocalStorage(LOCAL_STORAGE_KEYS.REGISTRATION_STATUS);
-            removeFromLocalStorage(LOCAL_STORAGE_KEYS.CHAT_MESSAGES);
-            setUserData(null);
-            setShowRegistration(true);
-            setError(null);
-        } catch (error) {
-            console.error("Error clearing session:", error);
-            setError("Failed to clear session");
-        }
+        removeFromLocalStorage(LOCAL_STORAGE_KEYS.USER_DATA);
+        removeFromLocalStorage(LOCAL_STORAGE_KEYS.REGISTRATION_STATUS);
+        removeFromLocalStorage(LOCAL_STORAGE_KEYS.CHAT_MESSAGES);
+        setUserData(null);
+        setShowRegistration(true);
     };
-
-    const handleRetry = () => {
-        setError(null);
-        setIsLoading(true);
-        setTimeout(() => {
-            checkRegistrationStatus();
-        }, 500);
-    };
-
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-[600px] bg-gray-50 rounded-lg">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-center"
-                >
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading chat interface...</p>
-                </motion.div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="flex items-center justify-center h-[600px] bg-gray-50 rounded-lg">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center max-w-md p-6"
-                >
-                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <AlertCircle className="w-8 h-8 text-red-600" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                        Something went wrong
-                    </h3>
-                    <p className="text-gray-600 mb-4">{error}</p>
-                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                        <Button
-                            onClick={handleRetry}
-                            className="flex items-center"
-                        >
-                            <RefreshCw size={16} className="mr-2" />
-                            Try Again
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={handleClearSession}
-                            className="flex items-center"
-                        >
-                            <Users size={16} className="mr-2" />
-                            Start Over
-                        </Button>
-                    </div>
-                </motion.div>
-            </div>
-        );
-    }
 
     return (
         <div className="w-full max-w-4xl mx-auto">
@@ -176,7 +90,6 @@ export default function ChatInterface() {
                     >
                         <PatientRegistrationForm
                             onRegistrationComplete={handleRegistrationComplete}
-                            onError={handleRegistrationError}
                         />
                     </motion.div>
                 ) : userData ? (

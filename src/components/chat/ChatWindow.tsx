@@ -2,19 +2,10 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-    Send,
-    HelpCircle,
-    X,
-    User,
-    RotateCcw,
-    ChevronDown,
-    ChevronUp,
-} from "lucide-react";
+import { Send, HelpCircle, X, User, RotateCcw, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ChatBubble from "./ChatBubble";
-import QuickActions from "./QuickActions";
 import { ChatWindowProps, ChatMessage, LOCAL_STORAGE_KEYS } from "@/types/chat";
 import { sendToWebhook } from "@/lib/api";
 import { saveToLocalStorage, getFromLocalStorage } from "@/lib/localStorage";
@@ -27,7 +18,6 @@ export default function ChatWindow({
     const [inputMessage, setInputMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [showHelp, setShowHelp] = useState(false);
-    const [showQuickActions, setShowQuickActions] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -53,9 +43,12 @@ export default function ChatWindow({
     const saveChatHistory = (newMessages: ChatMessage[]) => {
         saveToLocalStorage(LOCAL_STORAGE_KEYS.CHAT_MESSAGES, newMessages);
     };
-
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "nearest",
+        });
     };
 
     const sendWelcomeMessage = () => {
@@ -96,46 +89,32 @@ export default function ChatWindow({
 
         return newMessage;
     };
-
     const sendMessage = async (content: string) => {
         if (!content.trim() || isLoading) return;
-
-        // Hide quick actions after first message
-        setShowQuickActions(false);
 
         // Add user message
         addMessage(content, "user");
         setInputMessage("");
         setIsLoading(true);
 
-        try {
-            // Send to webhook and get AI response
-            const aiResponse = await sendToWebhook(content, userData);
+        // Send to webhook and get AI response
+        const aiResponse = await sendToWebhook(content, userData);
 
-            // Check if this is a booking confirmation
-            const isBookingConfirmation =
-                aiResponse.toLowerCase().includes("appointment") &&
-                (aiResponse.toLowerCase().includes("confirmed") ||
-                    aiResponse.toLowerCase().includes("booked"));
+        // Check if this is a booking confirmation
+        const isBookingConfirmation =
+            aiResponse.toLowerCase().includes("appointment") &&
+            (aiResponse.toLowerCase().includes("confirmed") ||
+                aiResponse.toLowerCase().includes("booked"));
 
-            // Add AI response
-            addMessage(aiResponse, "bot", isBookingConfirmation);
-        } catch (error) {
-            console.error("Error sending message:", error);
-            addMessage(
-                "I apologize, but I'm having trouble processing your request right now. Please try again in a moment, or contact our clinic directly if this is urgent.",
-                "bot"
-            );
-        } finally {
-            setIsLoading(false);
-        }
+        // Add AI response
+        addMessage(aiResponse, "bot", isBookingConfirmation);
+        setIsLoading(false);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         sendMessage(inputMessage);
     };
-
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -143,14 +122,9 @@ export default function ChatWindow({
         }
     };
 
-    const handleQuickAction = (message: string) => {
-        sendMessage(message);
-    };
-
     const clearChat = () => {
         setMessages([]);
         saveChatHistory([]);
-        setShowQuickActions(true);
         sendWelcomeMessage();
     };
 
@@ -277,7 +251,6 @@ export default function ChatWindow({
                 {messages.map((message) => (
                     <ChatBubble key={message.id} message={message} />
                 ))}
-
                 {/* Loading indicator */}
                 {isLoading && (
                     <motion.div
@@ -304,30 +277,9 @@ export default function ChatWindow({
                             </div>
                         </div>
                     </motion.div>
-                )}
-
+                )}{" "}
                 <div ref={messagesEndRef} />
             </div>
-
-            {/* Quick Actions */}
-            <AnimatePresence>
-                {showQuickActions && !isLoading && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="px-4 border-t border-gray-200"
-                    >
-                        <div className="py-4">
-                            <QuickActions
-                                onActionClick={handleQuickAction}
-                                disabled={isLoading}
-                            />
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             {/* Input Area */}
             <div className="p-4 border-t border-gray-200">
@@ -340,20 +292,7 @@ export default function ChatWindow({
                             onKeyPress={handleKeyPress}
                             placeholder="Type your message here..."
                             disabled={isLoading}
-                            className="pr-12"
                         />
-                        {!showQuickActions && messages.length > 1 && (
-                            <Button
-                                type="button"
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => setShowQuickActions(true)}
-                                className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
-                                title="Show quick actions"
-                            >
-                                <ChevronDown size={14} />
-                            </Button>
-                        )}
                     </div>
                     <Button
                         type="submit"

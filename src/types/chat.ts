@@ -32,7 +32,6 @@ export interface ChatMessage {
 
 export interface PatientRegistrationFormProps {
     onRegistrationComplete: (userData: UserData) => void;
-    onError: (error: string) => void;
 }
 
 export interface ChatWindowProps {
@@ -42,11 +41,6 @@ export interface ChatWindowProps {
 
 export interface ChatBubbleProps {
     message: ChatMessage;
-}
-
-export interface QuickActionsProps {
-    onActionClick: (message: string) => void;
-    disabled?: boolean;
 }
 
 export interface ValidationErrors {
